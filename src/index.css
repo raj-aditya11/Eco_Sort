@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *, [data-theme="dark"], [data-theme="dark"] *));
+
 @layer base {
   :root {
     --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
@@ -19,7 +21,8 @@
     color: var(--text-primary);
   }
 
-  .dark {
+  .dark,
+  :root[data-theme="dark"] {
     --bg-canvas: #0D1614;
     --surface-dark: #091310;
     --text-primary: #EAEFEA;
@@ -27,7 +30,8 @@
     --border-subtle: #1C2B25;
   }
 
-  .dark body {
+  .dark body,
+  :root[data-theme="dark"] body {
     background-color: var(--bg-canvas);
     color: var(--text-primary);
   }
@@ -52,4 +56,94 @@
 }
 ::-webkit-scrollbar-thumb:hover {
   background: rgba(115, 125, 117, 0.45);
+}
+
+/* Dedicated print view hidden by default on screen */
+#ecosort-printable-report {
+  display: none;
+}
+
+/* ==========================================================================
+   PRINT SPECIFIC STYLES
+   Ensures professional black-on-white document printing
+   ========================================================================== */
+@media print {
+  @page {
+    margin: 15mm 15mm 15mm 15mm;
+    size: A4 portrait;
+  }
+
+  /* Hide entire interactive shell, navigation, buttons, and toasts */
+  #root,
+  header,
+  nav,
+  button,
+  .no-print,
+  #toast-container,
+  [aria-label="Dismiss toast"],
+  footer {
+    display: none !important;
+  }
+
+  /* Show the dedicated print container exclusively */
+  #ecosort-printable-report {
+    display: block !important;
+    position: static !important;
+    width: 100% !important;
+    min-height: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: #ffffff !important;
+    color: #111827 !important;
+    visibility: visible !important;
+  }
+
+  html,
+  body {
+    background-color: #ffffff !important;
+    background: #ffffff !important;
+    color: #111827 !important;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
+    font-size: 11pt !important;
+    line-height: 1.4 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  /* Avoid page breaks inside cards, tables, and alert blocks */
+  .print-avoid-break,
+  table,
+  tr,
+  figure {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+
+  .print-page-break {
+    page-break-before: always !important;
+    break-before: page !important;
+  }
+
+  /* Reset dark mode colors to clean black-on-white in print */
+  * {
+    color: #111827 !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+
+  /* Keep table borders visible */
+  table {
+    border-collapse: collapse !important;
+    width: 100% !important;
+  }
+
+  th, td {
+    border: 1px solid #d1d5db !important;
+    padding: 6px 10px !important;
+  }
+
+  th {
+    background-color: #f3f4f6 !important;
+    font-weight: 700 !important;
+  }
 }

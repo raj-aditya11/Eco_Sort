@@ -84,10 +84,10 @@ export const Navbar: React.FC<NavbarProps> = ({
           <button
             onClick={onToggleDarkMode}
             className="p-2 rounded-lg text-[#737D75] hover:text-[#18251F] dark:text-[#85948A] dark:hover:text-[#EAEFEA] transition-colors cursor-pointer"
-            aria-label="Toggle dark mode"
-            title="Toggle theme"
+            aria-label={darkMode ? "Switch to light theme" : "Switch to dark theme"}
+            title={darkMode ? "Switch to light theme" : "Switch to dark theme"}
           >
-            {darkMode ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+            {darkMode ? <Sun className="w-4 h-4 text-[#C8F169]" /> : <Moon className="w-4 h-4" />}
           </button>
 
           <button

@@ -14,6 +14,7 @@ import {
   FileCheck
 } from 'lucide-react';
 import { AnalysisResult, ActionChecklistItem } from '../types/index.ts';
+import { printAnalysisReport } from '../utils/printReport.js';
 
 interface ResultsViewProps {
   result: AnalysisResult;
@@ -51,7 +52,8 @@ export const ResultsView: React.FC<ResultsViewProps> = ({
   };
 
   const handlePrint = () => {
-    window.print();
+    printAnalysisReport(result);
+    onShowToast('Printing Analysis Report', 'Opening browser print dialog...', 'info');
   };
 
   // Circular gauge math
@@ -66,7 +68,7 @@ export const ResultsView: React.FC<ResultsViewProps> = ({
   return (
     <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
       {/* Top Breadcrumb & Action Toolbar */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-[#E2E6DF] dark:border-[#1C2B25] pb-5">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-[#E2E6DF] dark:border-[#1C2B25] pb-5 no-print">
         <div className="space-y-1">
           <div className="flex items-center gap-2 text-xs text-[#737D75] dark:text-[#85948A]">
             <button
@@ -92,7 +94,7 @@ export const ResultsView: React.FC<ResultsViewProps> = ({
         </div>
 
         {/* Action Buttons */}
-        <div className="flex flex-wrap items-center gap-2.5">
+        <div className="flex flex-wrap items-center gap-2.5 no-print">
           <button
             onClick={handlePrint}
             className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-medium text-[#18251F] dark:text-[#EAEFEA] bg-white dark:bg-[#102A24] border border-[#E2E6DF] dark:border-[#1E352F] hover:bg-[#F2F4EF] dark:hover:bg-[#15342C] rounded-lg transition-colors cursor-pointer"

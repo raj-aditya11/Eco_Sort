@@ -29,6 +29,7 @@ import { AnalysisResult } from '../types/index.ts';
 interface DashboardViewProps {
   onNewAnalysis: () => void;
   onViewAnalysis: (analysis: AnalysisResult) => void;
+  darkMode?: boolean;
 }
 
 const MATERIAL_COLORS: Record<string, string> = {
@@ -42,7 +43,8 @@ const MATERIAL_COLORS: Record<string, string> = {
 
 export const DashboardView: React.FC<DashboardViewProps> = ({
   onNewAnalysis,
-  onViewAnalysis
+  onViewAnalysis,
+  darkMode = true
 }) => {
   const [stats, setStats] = useState<any>(null);
   const [recentItems, setRecentItems] = useState<AnalysisResult[]>([]);
@@ -223,15 +225,16 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                       <stop offset="95%" stopColor="#16A36A" stopOpacity={0.0} />
                     </linearGradient>
                   </defs>
-                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(115, 125, 117, 0.15)" />
-                  <XAxis dataKey="batch" tick={{ fontSize: 11, fill: '#737D75' }} axisLine={false} tickLine={false} />
-                  <YAxis domain={[0, 50]} tick={{ fontSize: 11, fill: '#737D75' }} axisLine={false} tickLine={false} />
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke={darkMode ? "rgba(255, 255, 255, 0.08)" : "rgba(0, 0, 0, 0.06)"} />
+                  <XAxis dataKey="batch" tick={{ fontSize: 11, fill: darkMode ? '#85948A' : '#737D75' }} axisLine={false} tickLine={false} />
+                  <YAxis domain={[0, 50]} tick={{ fontSize: 11, fill: darkMode ? '#85948A' : '#737D75' }} axisLine={false} tickLine={false} />
                   <Tooltip
                     contentStyle={{
-                      backgroundColor: '#102A24',
-                      border: '1px solid #16A36A',
+                      backgroundColor: darkMode ? '#102A24' : '#FFFFFF',
+                      border: darkMode ? '1px solid #16A36A' : '1px solid #E2E6DF',
                       borderRadius: '8px',
-                      color: '#EAEFEA',
+                      color: darkMode ? '#EAEFEA' : '#18251F',
+                      boxShadow: darkMode ? '0 10px 15px -3px rgba(0, 0, 0, 0.5)' : '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
                       fontSize: '12px'
                     }}
                     formatter={(value: any) => [`${value}%`, 'Contamination']}
@@ -277,10 +280,11 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                   </Pie>
                   <Tooltip
                     contentStyle={{
-                      backgroundColor: '#102A24',
-                      border: '1px solid #1E352F',
+                      backgroundColor: darkMode ? '#102A24' : '#FFFFFF',
+                      border: darkMode ? '1px solid #1E352F' : '1px solid #E2E6DF',
                       borderRadius: '8px',
-                      color: '#EAEFEA',
+                      color: darkMode ? '#EAEFEA' : '#18251F',
+                      boxShadow: darkMode ? '0 10px 15px -3px rgba(0, 0, 0, 0.5)' : '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
                       fontSize: '11px'
                     }}
                     formatter={(value: any, name: any) => [`${value}%`, name]}

@@ -12,10 +12,26 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script>
+      // Restore theme immediately on initial parse to prevent theme flash
+      (function() {
+        try {
+          var saved = localStorage.getItem('ecosort_theme');
+          // If no preference exists, use existing dark theme as default
+          var isDark = saved !== null ? saved === 'dark' : true;
+          if (isDark) {
+            document.documentElement.classList.add('dark');
+            document.documentElement.setAttribute('data-theme', 'dark');
+          } else {
+            document.documentElement.classList.remove('dark');
+            document.documentElement.setAttribute('data-theme', 'light');
+          }
+        } catch (e) {}
+      })();
+    </script>
   </head>
-  <body class="bg-[#F7F8F5] text-[#18251F] antialiased selection:bg-[#C8F169] selection:text-[#102A24]">
+  <body class="bg-[#F7F8F5] dark:bg-[#0D1614] text-[#18251F] dark:text-[#EAEFEA] antialiased selection:bg-[#C8F169] selection:text-[#102A24]">
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
-

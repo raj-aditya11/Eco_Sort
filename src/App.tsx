@@ -15,22 +15,29 @@ export default function App() {
   const [preselectedSampleId, setPreselectedSampleId] = useState<string | undefined>(undefined);
   const [toasts, setToasts] = useState<ToastMessage[]>([]);
 
-  // Dark mode with localStorage persistence
+  // Dark mode with localStorage persistence (defaults to true / dark mode if no preference exists)
   const [darkMode, setDarkMode] = useState<boolean>(() => {
     if (typeof window !== 'undefined') {
       const saved = localStorage.getItem('ecosort_theme');
-      if (saved) return saved === 'dark';
-      return window.matchMedia('(prefers-color-scheme: dark)').matches;
+      if (saved !== null) {
+        return saved === 'dark';
+      }
     }
-    return false;
+    return true; // Default to dark theme as required
   });
 
   useEffect(() => {
     if (darkMode) {
       document.documentElement.classList.add('dark');
+      document.documentElement.setAttribute('data-theme', 'dark');
+      document.body.classList.add('dark');
+      document.body.setAttribute('data-theme', 'dark');
       localStorage.setItem('ecosort_theme', 'dark');
     } else {
       document.documentElement.classList.remove('dark');
+      document.documentElement.setAttribute('data-theme', 'light');
+      document.body.classList.remove('dark');
+      document.body.setAttribute('data-theme', 'light');
       localStorage.setItem('ecosort_theme', 'light');
     }
   }, [darkMode]);
@@ -114,6 +121,7 @@ export default function App() {
               setCurrentView('results');
               window.scrollTo({ top: 0, behavior: 'smooth' });
             }}
+            darkMode={darkMode}
           />
         )}
 
