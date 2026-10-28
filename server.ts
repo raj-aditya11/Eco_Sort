@@ -149,7 +149,8 @@ function getGeminiClient(): GoogleGenAI | null {
     httpOptions: {
       headers: {
         'User-Agent': 'aistudio-build'
-      }
+      },
+      timeout: 45000
     }
   });
 }
@@ -349,19 +350,13 @@ app.post('/api/analyze', async (req: Request, res: Response) => {
     // Strip base64 prefix if present
     const cleanBase64 = imageBase64.replace(/^data:image\/[a-zA-Z+]+;base64,/, '');
 
+    console.log(`[EcoSort Backend] Backend received the image (stream: ${wasteStream}, batch: ${batchName || 'auto'}, size: ${cleanBase64.length} chars)`);
+
     const ai = getGeminiClient();
 
     if (!ai) {
-      // Graceful fallback with domain analysis when API key is not yet set
-      const result = generateDomainFallbackAnalysis(
-        wasteStream as WasteStreamType,
-        batchName,
-        facilityLine,
-        `data:${mimeType};base64,${cleanBase64.substring(0, 500)}...`
-      );
-      if (notes) result.operatorNotes = notes;
-      historyStore.unshift(result);
-      res.json(result);
+      console.error('[EcoSort Backend] Gemini API key is missing on the server');
+      res.status(500).json({ error: 'Server configuration error: GEMINI_API_KEY is not configured on the backend.' });
       return;
     }
 
@@ -381,123 +376,158 @@ Evaluate the provided image with rigorous accuracy:
 
     const promptText = `Analyze this waste stream batch for contamination risk. Target stream: ${wasteStream}. Batch Name: ${batchName || 'Unassigned'}. Provide strict JSON output.`;
 
-    const response = await ai.models.generateContent({
-      model: 'gemini-3.8-flash',
-      contents: {
-        parts: [
-          {
-            inlineData: {
-              mimeType: mimeType || 'image/jpeg',
-              data: cleanBase64
+    const modelName = 'gemini-3.1-flash-lite';
+    console.log(`[EcoSort Backend] Gemini request started (model: ${modelName})`);
+    const startTime = Date.now();
+
+    let response;
+    try {
+      response = await ai.models.generateContent({
+        model: modelName,
+        contents: {
+          parts: [
+            {
+              inlineData: {
+                mimeType: mimeType || 'image/jpeg',
+                data: cleanBase64
+              }
+            },
+            {
+              text: promptText
             }
-          },
-          {
-            text: promptText
-          }
-        ]
-      },
-      config: {
-        systemInstruction,
-        responseMimeType: 'application/json',
-        responseSchema: {
-          type: Type.OBJECT,
-          properties: {
-            overallRisk: {
-              type: Type.STRING,
-              description: "Must be 'LOW', 'MODERATE', 'HIGH', or 'CRITICAL'"
-            },
-            contaminationScore: {
-              type: Type.NUMBER,
-              description: "0 to 100 contamination severity index"
-            },
-            streamSuitability: {
-              type: Type.STRING,
-              description: "Must be 'ACCEPTED', 'ACCEPTED_WITH_SORTING', or 'REJECTED'"
-            },
-            suitabilityReason: {
-              type: Type.STRING,
-              description: "Specific regulatory or operational reason"
-            },
-            materialsDetected: {
-              type: Type.ARRAY,
-              items: {
-                type: Type.OBJECT,
-                properties: {
-                  name: { type: Type.STRING },
-                  category: {
-                    type: Type.STRING,
-                    description: "Plastics, Paper & Cardboard, Metals, Glass, Organics, or Non-Recyclable Contaminant"
-                  },
-                  estimatedPercentage: { type: Type.NUMBER },
-                  confidence: { type: Type.NUMBER },
-                  recyclableInStream: { type: Type.BOOLEAN },
-                  notes: { type: Type.STRING }
-                },
-                required: ['name', 'category', 'estimatedPercentage', 'confidence', 'recyclableInStream']
-              }
-            },
-            contaminationAlerts: {
-              type: Type.ARRAY,
-              items: {
-                type: Type.OBJECT,
-                properties: {
-                  item: { type: Type.STRING },
-                  severity: { type: Type.STRING, description: "CRITICAL, WARNING, or NOTICE" },
-                  description: { type: Type.STRING },
-                  visualEvidence: { type: Type.STRING },
-                  correctiveAction: { type: Type.STRING }
-                },
-                required: ['item', 'severity', 'description', 'visualEvidence', 'correctiveAction']
-              }
-            },
-            actionChecklist: {
-              type: Type.ARRAY,
-              items: {
-                type: Type.OBJECT,
-                properties: {
-                  step: { type: Type.INTEGER },
-                  title: { type: Type.STRING },
-                  priority: { type: Type.STRING, description: "HIGH, MEDIUM, or LOW" },
-                  description: { type: Type.STRING },
-                  estimatedDivertRate: { type: Type.STRING }
-                },
-                required: ['step', 'title', 'priority', 'description', 'estimatedDivertRate']
-              }
-            },
-            batchRecommendations: {
-              type: Type.ARRAY,
-              items: { type: Type.STRING }
-            },
-            summaryProse: {
-              type: Type.STRING
-            }
-          },
-          required: [
-            'overallRisk',
-            'contaminationScore',
-            'streamSuitability',
-            'suitabilityReason',
-            'materialsDetected',
-            'contaminationAlerts',
-            'actionChecklist',
-            'batchRecommendations',
-            'summaryProse'
           ]
+        },
+        config: {
+          systemInstruction,
+          responseMimeType: 'application/json',
+          responseSchema: {
+            type: Type.OBJECT,
+            properties: {
+              overallRisk: {
+                type: Type.STRING,
+                description: "Must be 'LOW', 'MODERATE', 'HIGH', or 'CRITICAL'"
+              },
+              contaminationScore: {
+                type: Type.NUMBER,
+                description: "0 to 100 contamination severity index"
+              },
+              streamSuitability: {
+                type: Type.STRING,
+                description: "Must be 'ACCEPTED', 'ACCEPTED_WITH_SORTING', or 'REJECTED'"
+              },
+              suitabilityReason: {
+                type: Type.STRING,
+                description: "Specific regulatory or operational reason"
+              },
+              materialsDetected: {
+                type: Type.ARRAY,
+                items: {
+                  type: Type.OBJECT,
+                  properties: {
+                    name: { type: Type.STRING },
+                    category: {
+                      type: Type.STRING,
+                      description: "Plastics, Paper & Cardboard, Metals, Glass, Organics, or Non-Recyclable Contaminant"
+                    },
+                    estimatedPercentage: { type: Type.NUMBER },
+                    confidence: { type: Type.NUMBER },
+                    recyclableInStream: { type: Type.BOOLEAN },
+                    notes: { type: Type.STRING }
+                  },
+                  required: ['name', 'category', 'estimatedPercentage', 'confidence', 'recyclableInStream']
+                }
+              },
+              contaminationAlerts: {
+                type: Type.ARRAY,
+                items: {
+                  type: Type.OBJECT,
+                  properties: {
+                    item: { type: Type.STRING },
+                    severity: { type: Type.STRING, description: "CRITICAL, WARNING, or NOTICE" },
+                    description: { type: Type.STRING },
+                    visualEvidence: { type: Type.STRING },
+                    correctiveAction: { type: Type.STRING }
+                  },
+                  required: ['item', 'severity', 'description', 'visualEvidence', 'correctiveAction']
+                }
+              },
+              actionChecklist: {
+                type: Type.ARRAY,
+                items: {
+                  type: Type.OBJECT,
+                  properties: {
+                    step: { type: Type.INTEGER },
+                    title: { type: Type.STRING },
+                    priority: { type: Type.STRING, description: "HIGH, MEDIUM, or LOW" },
+                    description: { type: Type.STRING },
+                    estimatedDivertRate: { type: Type.STRING }
+                  },
+                  required: ['step', 'title', 'priority', 'description', 'estimatedDivertRate']
+                }
+              },
+              batchRecommendations: {
+                type: Type.ARRAY,
+                items: { type: Type.STRING }
+              },
+              summaryProse: {
+                type: Type.STRING
+              }
+            },
+            required: [
+              'overallRisk',
+              'contaminationScore',
+              'streamSuitability',
+              'suitabilityReason',
+              'materialsDetected',
+              'contaminationAlerts',
+              'actionChecklist',
+              'batchRecommendations',
+              'summaryProse'
+            ]
+          }
         }
-      }
-    });
+      });
+    } catch (primaryErr: any) {
+      console.warn(`[EcoSort Backend] Primary model ${modelName} failed (${primaryErr?.message}). Retrying with gemini-flash-latest...`);
+      response = await ai.models.generateContent({
+        model: 'gemini-flash-latest',
+        contents: {
+          parts: [
+            {
+              inlineData: {
+                mimeType: mimeType || 'image/jpeg',
+                data: cleanBase64
+              }
+            },
+            {
+              text: promptText
+            }
+          ]
+        },
+        config: {
+          systemInstruction,
+          responseMimeType: 'application/json'
+        }
+      });
+    }
+
+    const duration = Date.now() - startTime;
+    console.log(`[EcoSort Backend] Gemini response received in ${duration} ms`);
 
     const rawText = response.text || '{}';
     let parsed: any;
     try {
       parsed = JSON.parse(rawText);
-    } catch {
-      // In case of any parsing hiccup, safely format
-      parsed = generateDomainFallbackAnalysis(wasteStream as WasteStreamType, batchName, facilityLine);
+      console.log('[EcoSort Backend] Response parsed and validated');
+    } catch (parseErr: any) {
+      console.error('[EcoSort Backend] Failed to parse Gemini response JSON:', rawText);
+      res.status(502).json({ error: 'Failed to parse structured model response from Gemini AI.' });
+      return;
     }
 
-    const contaminationScore = Math.min(100, Math.max(0, Number(parsed.contaminationScore) || 12));
+    const contaminationScore = Math.min(100, Math.max(0, Number(parsed.contaminationScore) || 0));
     const purityIndex = Math.round((100 - contaminationScore) * 10) / 10;
+    console.log(`[EcoSort Backend] Contamination score and recommendations calculated (score: ${contaminationScore}%, purity: ${purityIndex}%, risk: ${parsed.overallRisk})`);
 
     const fullResult: AnalysisResult = {
       id: `eco-audit-${Date.now()}`,
@@ -506,10 +536,10 @@ Evaluate the provided image with rigorous accuracy:
       wasteStream: wasteStream as WasteStreamType,
       facilityLine: facilityLine || 'Line 01 Optical Scanner',
       imageUrl: `data:${mimeType};base64,${cleanBase64}`,
-      overallRisk: (parsed.overallRisk || 'LOW') as any,
+      overallRisk: (parsed.overallRisk?.toUpperCase() || 'LOW') as any,
       contaminationScore,
       purityIndex,
-      streamSuitability: (parsed.streamSuitability || 'ACCEPTED') as any,
+      streamSuitability: (parsed.streamSuitability?.toUpperCase() || 'ACCEPTED') as any,
       suitabilityReason: parsed.suitabilityReason || 'Standard visual inspection completed.',
       materialsDetected: Array.isArray(parsed.materialsDetected) ? parsed.materialsDetected : [],
       contaminationAlerts: Array.isArray(parsed.contaminationAlerts) ? parsed.contaminationAlerts : [],
@@ -524,17 +554,14 @@ Evaluate the provided image with rigorous accuracy:
     };
 
     historyStore.unshift(fullResult);
+    console.log('[EcoSort Backend] Results returned to the frontend');
     res.json(fullResult);
   } catch (error: any) {
-    console.error('Analysis error:', error);
-    // Provide robust domain fallback so UI always succeeds
-    const fallback = generateDomainFallbackAnalysis(
-      (req.body?.wasteStream || 'SINGLE_STREAM') as WasteStreamType,
-      req.body?.batchName || 'Facility-Batch-Auto',
-      req.body?.facilityLine
-    );
-    historyStore.unshift(fallback);
-    res.json(fallback);
+    console.error('[EcoSort Backend] Analysis pipeline error:', error?.message || error);
+    res.status(502).json({
+      error: `Analysis failed: ${error?.message || 'Gemini model service error'}`,
+      code: error?.status || 502
+    });
   }
 });
 

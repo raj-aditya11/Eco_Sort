@@ -104,6 +104,12 @@ export const AnalyzeView: React.FC<AnalyzeViewProps> = ({
       return;
     }
 
+    console.log('[EcoSort Frontend] Image received by the frontend', {
+      name: file.name,
+      size: `${(file.size / (1024 * 1024)).toFixed(2)} MB`,
+      type: file.type
+    });
+
     setAnalysisError(null);
     setImageFile(file);
     setImageMetadata({
@@ -115,6 +121,10 @@ export const AnalyzeView: React.FC<AnalyzeViewProps> = ({
     const reader = new FileReader();
     reader.onload = (e) => {
       setImagePreviewUrl(e.target?.result as string);
+    };
+    reader.onerror = (e) => {
+      console.error('[EcoSort Frontend] FileReader error:', e);
+      setAnalysisError('Failed to read the local image file.');
     };
     reader.readAsDataURL(file);
   };
@@ -131,6 +141,7 @@ export const AnalyzeView: React.FC<AnalyzeViewProps> = ({
     setImageFile(null);
     setImagePreviewUrl(null);
     setImageMetadata(null);
+    setAnalysisError(null);
     if (fileInputRef.current) fileInputRef.current.value = '';
   };
 
@@ -147,18 +158,25 @@ export const AnalyzeView: React.FC<AnalyzeViewProps> = ({
     // Realistic stage progression interval
     const interval = setInterval(() => {
       setActiveStageIndex((prev) => (prev < ANALYSIS_STAGES.length - 1 ? prev + 1 : prev));
-    }, 800);
+    }, 1200);
+
+    // 60-second network timeout controller
+    const abortController = new AbortController();
+    const timeoutId = setTimeout(() => {
+      console.warn('[EcoSort Frontend] Request timed out after 60 seconds. Aborting...');
+      abortController.abort();
+    }, 60000);
 
     try {
       let base64Data = '';
       let mimeType = 'image/jpeg';
 
       if (imageFile) {
-        // Read file as base64
+        // Read file as base64 with reliable error handling
         const fileBase64 = await new Promise<string>((resolve, reject) => {
           const reader = new FileReader();
           reader.onload = () => resolve(reader.result as string);
-          reader.onerror = reject;
+          reader.onerror = () => reject(new Error('Failed to read image file data.'));
           reader.readAsDataURL(imageFile);
         });
         base64Data = fileBase64;
@@ -168,19 +186,29 @@ export const AnalyzeView: React.FC<AnalyzeViewProps> = ({
       } else {
         // Fetch static sample path to base64
         const resp = await fetch(imagePreviewUrl);
+        if (!resp.ok) {
+          throw new Error(`Failed to load sample image (HTTP ${resp.status}).`);
+        }
         const blob = await resp.blob();
         base64Data = await new Promise<string>((resolve, reject) => {
           const reader = new FileReader();
           reader.onload = () => resolve(reader.result as string);
-          reader.onerror = reject;
+          reader.onerror = () => reject(new Error('Failed to convert sample image to base64.'));
           reader.readAsDataURL(blob);
         });
         mimeType = blob.type || 'image/jpeg';
       }
 
+      console.log('[EcoSort Frontend] Request sent to the backend (/api/analyze)', {
+        stream: selectedStream,
+        batch: batchName.trim() || 'auto',
+        payloadLength: base64Data.length
+      });
+
       const response = await fetch('/api/analyze', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        signal: abortController.signal,
         body: JSON.stringify({
           imageBase64: base64Data,
           mimeType,
@@ -191,18 +219,46 @@ export const AnalyzeView: React.FC<AnalyzeViewProps> = ({
         })
       });
 
+      console.log('[EcoSort Frontend] Response received from the backend', {
+        status: response.status,
+        ok: response.ok
+      });
+
       if (!response.ok) {
-        throw new Error(`Server returned HTTP ${response.status}`);
+        let errDetail = `Server returned HTTP ${response.status}`;
+        try {
+          const errJson = await response.json();
+          if (errJson?.error) errDetail = errJson.error;
+        } catch {
+          // ignore json parse error
+        }
+        throw new Error(errDetail);
       }
 
       const result: AnalysisResult = await response.json();
+      console.log('[EcoSort Frontend] Results displayed successfully', {
+        id: result.id,
+        batch: result.batchName,
+        score: result.contaminationScore,
+        risk: result.overallRisk
+      });
+
       clearInterval(interval);
+      clearTimeout(timeoutId);
       onAnalysisComplete(result);
     } catch (err: any) {
-      console.error('Analysis failed:', err);
-      setAnalysisError(err?.message || 'Failed to complete analysis. Please try again.');
+      clearInterval(interval);
+      clearTimeout(timeoutId);
+      console.error('[EcoSort Frontend] Analysis pipeline failed:', err);
+
+      if (err?.name === 'AbortError') {
+        setAnalysisError('The analysis request timed out after 60 seconds. The vision model may be experiencing network latency. Please click Retry Analysis.');
+      } else {
+        setAnalysisError(err?.message || 'Failed to complete analysis. Please try again.');
+      }
     } finally {
       clearInterval(interval);
+      clearTimeout(timeoutId);
       setIsAnalyzing(false);
     }
   };
@@ -227,14 +283,27 @@ export const AnalyzeView: React.FC<AnalyzeViewProps> = ({
       </div>
 
       {analysisError && (
-        <div className="p-4 rounded-xl bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-900/60 text-xs text-red-800 dark:text-red-300 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Info className="w-4 h-4 text-red-600 shrink-0" />
-            <span>{analysisError}</span>
+        <div className="p-4 rounded-xl bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-900/60 text-xs text-red-800 dark:text-red-300 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div className="flex items-start sm:items-center gap-2.5">
+            <Info className="w-4 h-4 text-red-600 shrink-0 mt-0.5 sm:mt-0" />
+            <span className="leading-relaxed">{analysisError}</span>
           </div>
-          <button onClick={() => setAnalysisError(null)} className="text-red-600 hover:text-red-800">
-            <X className="w-3.5 h-3.5" />
-          </button>
+          <div className="flex items-center gap-2 shrink-0 self-end sm:self-auto">
+            <button
+              onClick={runAnalysis}
+              className="px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white rounded-lg font-medium transition-colors cursor-pointer text-xs flex items-center gap-1 shadow-sm"
+            >
+              <RefreshCw className="w-3 h-3" />
+              <span>Retry Analysis</span>
+            </button>
+            <button
+              onClick={() => setAnalysisError(null)}
+              className="p-1.5 text-red-600 hover:text-red-800 dark:hover:text-red-200 transition-colors cursor-pointer"
+              aria-label="Dismiss error"
+            >
+              <X className="w-3.5 h-3.5" />
+            </button>
+          </div>
         </div>
       )}
 

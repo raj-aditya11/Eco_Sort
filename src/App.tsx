@@ -55,6 +55,12 @@ export default function App() {
 
   // Analysis completion handler
   const handleAnalysisComplete = (result: AnalysisResult) => {
+    console.log('[EcoSort Frontend] Results displayed successfully', {
+      id: result.id,
+      batch: result.batchName,
+      risk: result.overallRisk,
+      score: result.contaminationScore
+    });
     setActiveAnalysis(result);
     setCurrentView('results');
     showToast(
