@@ -1,5 +1,6 @@
 import React from 'react';
 import { ArrowRight, Sparkles, CheckCircle2, ShieldCheck, Cpu, BarChart3, Layers, FileSpreadsheet } from 'lucide-react';
+import heroFacilityImage from '../assets/images/hero_waste_stream_facility_1793178553276.jpg';
 
 interface LandingHeroProps {
   onAnalyzeClick: () => void;
@@ -83,7 +84,7 @@ export const LandingHero: React.FC<LandingHeroProps> = ({
                 {/* Visual Header */}
                 <div className="relative aspect-[16/10] overflow-hidden bg-slate-900">
                   <img
-                    src="/src/assets/images/hero_waste_stream_facility_1793178553276.jpg"
+                    src={heroFacilityImage}
                     alt="Automated Optical Waste Sorting Facility with NIR Scanning"
                     className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
                     referrerPolicy="no-referrer"
