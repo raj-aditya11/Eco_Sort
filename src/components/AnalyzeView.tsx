@@ -17,8 +17,6 @@ import { WASTE_STREAM_DEFINITIONS } from '../data/standards.ts';
 
 interface AnalyzeViewProps {
   onAnalysisComplete: (result: AnalysisResult) => void;
-  preselectedSampleId?: string;
-  onClearSample?: () => void;
 }
 
 const ANALYSIS_STAGES = [
@@ -29,9 +27,7 @@ const ANALYSIS_STAGES = [
 ];
 
 export const AnalyzeView: React.FC<AnalyzeViewProps> = ({
-  onAnalysisComplete,
-  preselectedSampleId,
-  onClearSample
+  onAnalysisComplete
 }) => {
   const [selectedStream, setSelectedStream] = useState<WasteStreamType>('SINGLE_STREAM');
   const [batchName, setBatchName] = useState('');
@@ -50,49 +46,6 @@ export const AnalyzeView: React.FC<AnalyzeViewProps> = ({
   const [analysisError, setAnalysisError] = useState<string | null>(null);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
-
-  // Load sample if specified
-  useEffect(() => {
-    if (preselectedSampleId) {
-      loadPreloadedSample(preselectedSampleId);
-      if (onClearSample) onClearSample();
-    }
-  }, [preselectedSampleId]);
-
-  const loadPreloadedSample = async (sampleId: string) => {
-    try {
-      const sampleMap: Record<string, { path: string; name: string; stream: WasteStreamType }> = {
-        'sample-clean-segregated': {
-          path: '/src/assets/images/waste_sample_materials_1793178553637.jpg',
-          name: 'Segregated-Clean-Commodities.jpg',
-          stream: 'SINGLE_STREAM'
-        },
-        'sample-commercial-contaminated': {
-          path: '/src/assets/images/waste_sample_contaminated_1793178553543.jpg',
-          name: 'Mixed-Commercial-OCC-Film.jpg',
-          stream: 'COMMERCIAL_OCC'
-        },
-        'sample-optical-facility': {
-          path: '/src/assets/images/hero_waste_stream_facility_1793178553276.jpg',
-          name: 'Automated-Sorting-Facility.jpg',
-          stream: 'RIGID_PLASTICS'
-        }
-      };
-
-      const sample = sampleMap[sampleId] || sampleMap['sample-clean-segregated'];
-      setSelectedStream(sample.stream);
-      setBatchName(`Audit-${sample.stream.slice(0, 3)}-${Math.floor(Math.random() * 800 + 100)}`);
-      setImagePreviewUrl(sample.path);
-      setImageMetadata({
-        name: sample.name,
-        size: '1.8 MB (High Resolution)',
-        type: 'image/jpeg'
-      });
-      setImageFile(null);
-    } catch (err) {
-      console.error('Error loading sample:', err);
-    }
-  };
 
   const handleFileChange = (file: File) => {
     if (!file.type.startsWith('image/')) {
@@ -180,22 +133,13 @@ export const AnalyzeView: React.FC<AnalyzeViewProps> = ({
           reader.readAsDataURL(imageFile);
         });
         base64Data = fileBase64;
-        mimeType = imageFile.type;
+        mimeType = imageFile.type || 'image/jpeg';
       } else if (imagePreviewUrl.startsWith('data:')) {
         base64Data = imagePreviewUrl;
+        const mimeMatch = imagePreviewUrl.match(/^data:([^;]+);base64,/);
+        if (mimeMatch) mimeType = mimeMatch[1];
       } else {
-        const resp = await fetch(imagePreviewUrl);
-        if (!resp.ok) {
-          throw new Error(`Failed to load sample image (HTTP ${resp.status}).`);
-        }
-        const blob = await resp.blob();
-        base64Data = await new Promise<string>((resolve, reject) => {
-          const reader = new FileReader();
-          reader.onload = () => resolve(reader.result as string);
-          reader.onerror = () => reject(new Error('Failed to convert sample image to base64.'));
-          reader.readAsDataURL(blob);
-        });
-        mimeType = blob.type || 'image/jpeg';
+        throw new Error('Please select or upload a valid waste image.');
       }
 
       console.log('[EcoSort Frontend] Request sent to the backend (/api/analyze)', {
@@ -358,10 +302,10 @@ export const AnalyzeView: React.FC<AnalyzeViewProps> = ({
               </div>
 
               <h4 className="text-sm font-bold text-[#252923] dark:text-[#E6E8E3]">
-                Click to browse or drag and drop waste photograph
+                Upload a waste-batch image to begin inspection.
               </h4>
               <p className="text-xs text-[#777B73] dark:text-[#9DA399] mt-1.5 max-w-sm mx-auto leading-relaxed">
-                Conveyor belt captures, bin overviews, or receiving dock samples. Supports JPEG, PNG, and WebP up to 25MB.
+                Drag and drop a photograph or click to browse. Supports conveyor captures, receiving dock samples, and sorting bin photos (JPEG, PNG, WebP up to 25MB).
               </p>
 
               <div className="mt-4 inline-flex items-center gap-2 px-3 py-1.5 text-xs font-semibold text-[#252923] dark:text-[#E6E8E3] bg-[#F5F4EE] dark:bg-[#22332A] border border-[#DCDDD4] dark:border-[#2B312B] rounded">
@@ -409,56 +353,6 @@ export const AnalyzeView: React.FC<AnalyzeViewProps> = ({
               </div>
             </div>
           )}
-
-          {/* Demonstration Sample Batches */}
-          <div className="p-4 rounded-lg bg-[#FFFFFF] dark:bg-[#1C201C] border border-[#DCDDD4] dark:border-[#2B312B] space-y-2">
-            <span className="text-xs font-semibold text-[#252923] dark:text-[#E6E8E3] block">
-              Load demonstration sample image:
-            </span>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
-              <button
-                type="button"
-                onClick={() => loadPreloadedSample('sample-clean-segregated')}
-                disabled={isAnalyzing}
-                className="p-2.5 text-left rounded-md border border-[#DCDDD4] dark:border-[#2B312B] hover:border-[#245B45] hover:bg-[#F5F4EE] dark:hover:bg-[#22332A] transition-colors cursor-pointer group"
-              >
-                <div className="text-xs font-bold text-[#252923] dark:text-[#E6E8E3] group-hover:text-[#245B45] dark:group-hover:text-[#3A7D63]">
-                  Clean Segregated
-                </div>
-                <div className="text-[10px] text-[#777B73] dark:text-[#9DA399] mt-0.5">
-                  OCC, PET bottles &amp; aluminum cans
-                </div>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => loadPreloadedSample('sample-commercial-contaminated')}
-                disabled={isAnalyzing}
-                className="p-2.5 text-left rounded-md border border-[#DCDDD4] dark:border-[#2B312B] hover:border-[#245B45] hover:bg-[#F5F4EE] dark:hover:bg-[#22332A] transition-colors cursor-pointer group"
-              >
-                <div className="text-xs font-bold text-[#252923] dark:text-[#E6E8E3] group-hover:text-[#245B45] dark:group-hover:text-[#3A7D63]">
-                  Contaminated OCC
-                </div>
-                <div className="text-[10px] text-[#777B73] dark:text-[#9DA399] mt-0.5">
-                  Paperboard with plastic film wrapping
-                </div>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => loadPreloadedSample('sample-optical-facility')}
-                disabled={isAnalyzing}
-                className="p-2.5 text-left rounded-md border border-[#DCDDD4] dark:border-[#2B312B] hover:border-[#245B45] hover:bg-[#F5F4EE] dark:hover:bg-[#22332A] transition-colors cursor-pointer group"
-              >
-                <div className="text-xs font-bold text-[#252923] dark:text-[#E6E8E3] group-hover:text-[#245B45] dark:group-hover:text-[#3A7D63]">
-                  Optical Sorting Line
-                </div>
-                <div className="text-[10px] text-[#777B73] dark:text-[#9DA399] mt-0.5">
-                  Conveyor mixed rigid polymers
-                </div>
-              </button>
-            </div>
-          </div>
         </div>
 
         {/* Right Column: Parameters & Execution */}

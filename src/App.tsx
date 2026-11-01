@@ -14,7 +14,6 @@ export default function App() {
   // Default to overview (the Inspection Overview workspace) directly
   const [currentView, setCurrentView] = useState<AppViewType>('overview');
   const [activeAnalysis, setActiveAnalysis] = useState<AnalysisResult | null>(null);
-  const [preselectedSampleId, setPreselectedSampleId] = useState<string | undefined>(undefined);
   const [toasts, setToasts] = useState<ToastMessage[]>([]);
 
   // Dark mode with localStorage persistence
@@ -79,12 +78,6 @@ export default function App() {
     );
   };
 
-  // Sample batch inspection trigger
-  const handleOpenSample = (sampleId: string) => {
-    setPreselectedSampleId(sampleId);
-    setCurrentView('analyze');
-  };
-
   return (
     <div className="min-h-screen flex flex-col bg-[#F5F4EE] dark:bg-[#151815] text-[#252923] dark:text-[#E6E8E3] transition-colors">
       <Navbar
@@ -109,7 +102,6 @@ export default function App() {
               setCurrentView('results');
               window.scrollTo({ top: 0, behavior: 'smooth' });
             }}
-            onOpenSample={handleOpenSample}
             darkMode={darkMode}
           />
         )}
@@ -117,8 +109,6 @@ export default function App() {
         {currentView === 'analyze' && (
           <AnalyzeView
             onAnalysisComplete={handleAnalysisComplete}
-            preselectedSampleId={preselectedSampleId}
-            onClearSample={() => setPreselectedSampleId(undefined)}
           />
         )}
 

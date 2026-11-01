@@ -15,13 +15,11 @@ import heroFacilityImage from '../assets/images/hero_waste_stream_facility_17931
 interface LandingHeroProps {
   onAnalyzeClick: () => void;
   onExploreClick: () => void;
-  onOpenSample: (sampleId: string) => void;
 }
 
 export const LandingHero: React.FC<LandingHeroProps> = ({
   onAnalyzeClick,
-  onExploreClick,
-  onOpenSample
+  onExploreClick
 }) => {
   const [imageFailed, setImageFailed] = useState(false);
 
@@ -163,16 +161,17 @@ export const LandingHero: React.FC<LandingHeroProps> = ({
                     </div>
                   </div>
 
-                  {/* Quick Try Sample Button */}
+                  {/* Action Link to Upload Inspection */}
                   <div className="pt-3 flex items-center justify-between border-t border-[#E2E6DF] dark:border-[#1B332B]">
                     <span className="text-xs text-[#66736C] dark:text-[#8A9890]">
-                      Pre-loaded audit image:
+                      Station inspection:
                     </span>
                     <button
-                      onClick={() => onOpenSample('sample-clean-segregated')}
-                      className="text-xs font-semibold text-[#16A36A] hover:underline cursor-pointer"
+                      onClick={onAnalyzeClick}
+                      className="text-xs font-semibold text-[#16A36A] hover:underline cursor-pointer flex items-center gap-1"
                     >
-                      Run Instant Inspection →
+                      <span>Upload Batch Photo</span>
+                      <ArrowRight className="w-3 h-3" />
                     </button>
                   </div>
                 </div>

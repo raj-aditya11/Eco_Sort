@@ -30,7 +30,6 @@ import { AnalysisResult } from '../types/index.ts';
 interface DashboardViewProps {
   onNewAnalysis: () => void;
   onViewAnalysis: (analysis: AnalysisResult) => void;
-  onOpenSample?: (sampleId: string) => void;
   darkMode?: boolean;
 }
 
@@ -46,7 +45,6 @@ const MATERIAL_COLORS: Record<string, string> = {
 export const DashboardView: React.FC<DashboardViewProps> = ({
   onNewAnalysis,
   onViewAnalysis,
-  onOpenSample,
   darkMode = false
 }) => {
   const [stats, setStats] = useState<any>(null);
@@ -335,71 +333,6 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
           </div>
         </div>
       </div>
-
-      {/* Demonstration Sample Infeed Section */}
-      {onOpenSample && (
-        <div className="p-4 rounded-lg bg-[#FFFFFF] dark:bg-[#1C201C] border border-[#DCDDD4] dark:border-[#2B312B] space-y-2.5">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-bold uppercase tracking-wider text-[#252923] dark:text-[#E6E8E3] flex items-center gap-1.5">
-              <Layers className="w-3.5 h-3.5 text-[#245B45] dark:text-[#3A7D63]" />
-              <span>Inspection Sample Batches</span>
-            </span>
-            <span className="text-[11px] text-[#777B73] dark:text-[#9DA399]">
-              Pre-captured photographs for instant evaluation
-            </span>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
-            <button
-              type="button"
-              onClick={() => onOpenSample('sample-clean-segregated')}
-              className="p-3 text-left rounded-md border border-[#DCDDD4] dark:border-[#2B312B] hover:border-[#245B45] hover:bg-[#F5F4EE] dark:hover:bg-[#22332A] transition-colors cursor-pointer group"
-            >
-              <div className="flex items-center justify-between">
-                <span className="text-xs font-bold text-[#252923] dark:text-[#E6E8E3] group-hover:text-[#245B45] dark:group-hover:text-[#3A7D63]">
-                  Clean Segregated Stream
-                </span>
-                <ArrowRight className="w-3 h-3 text-[#777B73] group-hover:text-[#245B45] transition-transform group-hover:translate-x-0.5" />
-              </div>
-              <p className="text-[11px] text-[#777B73] dark:text-[#9DA399] mt-1 leading-snug">
-                Sorted fiber, clean PET bottles &amp; aluminum cans.
-              </p>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => onOpenSample('sample-commercial-contaminated')}
-              className="p-3 text-left rounded-md border border-[#DCDDD4] dark:border-[#2B312B] hover:border-[#245B45] hover:bg-[#F5F4EE] dark:hover:bg-[#22332A] transition-colors cursor-pointer group"
-            >
-              <div className="flex items-center justify-between">
-                <span className="text-xs font-bold text-[#252923] dark:text-[#E6E8E3] group-hover:text-[#245B45] dark:group-hover:text-[#3A7D63]">
-                  Contaminated Stream
-                </span>
-                <ArrowRight className="w-3 h-3 text-[#777B73] group-hover:text-[#245B45] transition-transform group-hover:translate-x-0.5" />
-              </div>
-              <p className="text-[11px] text-[#777B73] dark:text-[#9DA399] mt-1 leading-snug">
-                Commercial OCC bale with non-recyclable film wrap.
-              </p>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => onOpenSample('sample-optical-facility')}
-              className="p-3 text-left rounded-md border border-[#DCDDD4] dark:border-[#2B312B] hover:border-[#245B45] hover:bg-[#F5F4EE] dark:hover:bg-[#22332A] transition-colors cursor-pointer group"
-            >
-              <div className="flex items-center justify-between">
-                <span className="text-xs font-bold text-[#252923] dark:text-[#E6E8E3] group-hover:text-[#245B45] dark:group-hover:text-[#3A7D63]">
-                  Optical Sorter Infeed
-                </span>
-                <ArrowRight className="w-3 h-3 text-[#777B73] group-hover:text-[#245B45] transition-transform group-hover:translate-x-0.5" />
-              </div>
-              <p className="text-[11px] text-[#777B73] dark:text-[#9DA399] mt-1 leading-snug">
-                Conveyor belt feed with mixed rigid polymer packaging.
-              </p>
-            </button>
-          </div>
-        </div>
-      )}
 
       {/* Recent Analysis Table */}
       <div className="rounded-lg bg-[#FFFFFF] dark:bg-[#1C201C] border border-[#DCDDD4] dark:border-[#2B312B] overflow-hidden">

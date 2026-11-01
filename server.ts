@@ -25,7 +25,7 @@ let historyStore: AnalysisResult[] = [
     batchName: 'MRF-Line-3-Infeed-Bale-A12',
     wasteStream: 'SINGLE_STREAM',
     facilityLine: 'Conveyor Optical Infeed 03',
-    imageUrl: '/src/assets/images/waste_sample_materials_1793178553637.jpg',
+    imageUrl: '',
     overallRisk: 'LOW',
     contaminationScore: 8.5,
     purityIndex: 91.5,
@@ -63,7 +63,7 @@ let historyStore: AnalysisResult[] = [
     batchName: 'Commercial-OCC-Dock-Bay-7',
     wasteStream: 'COMMERCIAL_OCC',
     facilityLine: 'Dock Receiving Sorter 01',
-    imageUrl: '/src/assets/images/waste_sample_contaminated_1793178553543.jpg',
+    imageUrl: '',
     overallRisk: 'HIGH',
     contaminationScore: 36.2,
     purityIndex: 63.8,
@@ -301,7 +301,7 @@ function generateDomainFallbackAnalysis(
     batchName: batchName || `Batch-${new Date().toISOString().slice(0, 10)}-${Math.floor(Math.random() * 900 + 100)}`,
     wasteStream,
     facilityLine: facilityLine || 'Line 01 Primary Sorting Belt',
-    imageUrl: imageUrl || '/src/assets/images/waste_sample_materials_1793178553637.jpg',
+    imageUrl: imageUrl || '',
     overallRisk: template.risk,
     contaminationScore: template.score,
     purityIndex: Math.round((100 - template.score) * 10) / 10,
@@ -685,31 +685,9 @@ app.get('/api/stats', (_req: Request, res: Response) => {
   });
 });
 
-// 6. Pre-loaded high-resolution samples for testing
+// 6. Pre-loaded high-resolution samples (cleared)
 app.get('/api/sample-images', (_req: Request, res: Response) => {
-  res.json([
-    {
-      id: 'sample-clean-segregated',
-      title: 'Segregated Commodity Batch (Cardboard, PET, Aluminum)',
-      stream: 'SINGLE_STREAM',
-      path: '/src/assets/images/waste_sample_materials_1793178553637.jpg',
-      description: 'Clean post-collection sorting crates showing segregated high-purity commodities.'
-    },
-    {
-      id: 'sample-commercial-contaminated',
-      title: 'Mixed Municipal Stream (Film & Carton Contamination)',
-      stream: 'COMMERCIAL_OCC',
-      path: '/src/assets/images/waste_sample_contaminated_1793178553543.jpg',
-      description: 'Conveyor belt with unsegregated paperboard mixed with plastic film liners and beverage cartons.'
-    },
-    {
-      id: 'sample-optical-facility',
-      title: 'Facility Optical Sorting Chamber Line',
-      stream: 'RIGID_PLASTICS',
-      path: '/src/assets/images/hero_waste_stream_facility_1793178553276.jpg',
-      description: 'Automated multi-level NIR conveyor system with sensor chute inspection.'
-    }
-  ]);
+  res.json([]);
 });
 
 // Configure Vite integration
