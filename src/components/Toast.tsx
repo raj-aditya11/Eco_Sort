@@ -21,25 +21,25 @@ export const ToastContainer: React.FC<ToastContainerProps> = ({ toasts, onDismis
       {toasts.map((toast) => (
         <div
           key={toast.id}
-          className="pointer-events-auto flex items-start gap-3 p-3.5 bg-white dark:bg-[#102A24] border border-[#E2E6DF] dark:border-[#1E352F] rounded-lg shadow-lg text-sm text-[#18251F] dark:text-[#EAEFEA] transition-all transform translate-y-0"
+          className="pointer-events-auto flex items-start gap-2.5 p-3 bg-[#FFFFFF] dark:bg-[#1C201C] border border-[#DCDDD4] dark:border-[#2B312B] rounded shadow-md text-xs text-[#252923] dark:text-[#E6E8E3] transition-all"
         >
           <div className="shrink-0 mt-0.5">
-            {toast.type === 'success' && <CheckCircle2 className="w-4 h-4 text-[#16A36A]" />}
-            {toast.type === 'warning' && <AlertTriangle className="w-4 h-4 text-[#D97706]" />}
-            {toast.type === 'error' && <XCircle className="w-4 h-4 text-[#DC2626]" />}
-            {toast.type === 'info' && <Info className="w-4 h-4 text-[#16A36A]" />}
+            {toast.type === 'success' && <CheckCircle2 className="w-4 h-4 text-[#245B45] dark:text-[#3A7D63]" />}
+            {toast.type === 'warning' && <AlertTriangle className="w-4 h-4 text-[#B77928]" />}
+            {toast.type === 'error' && <XCircle className="w-4 h-4 text-[#A63F37]" />}
+            {toast.type === 'info' && <Info className="w-4 h-4 text-[#245B45] dark:text-[#3A7D63]" />}
           </div>
           <div className="flex-1 min-w-0">
-            <p className="font-semibold text-xs tracking-tight">{toast.title}</p>
+            <p className="font-bold tracking-tight">{toast.title}</p>
             {toast.message && (
-              <p className="text-xs text-[#737D75] dark:text-[#85948A] mt-0.5 leading-relaxed">
+              <p className="text-[11px] text-[#777B73] dark:text-[#9DA399] mt-0.5 leading-relaxed">
                 {toast.message}
               </p>
             )}
           </div>
           <button
             onClick={() => onDismiss(toast.id)}
-            className="shrink-0 text-[#737D75] hover:text-[#18251F] dark:hover:text-white transition-colors"
+            className="shrink-0 text-[#777B73] hover:text-[#252923] dark:hover:text-[#E6E8E3] transition-colors cursor-pointer"
             aria-label="Dismiss toast"
           >
             <X className="w-3.5 h-3.5" />

@@ -88,7 +88,7 @@ export const AnalyzeView: React.FC<AnalyzeViewProps> = ({
         size: '1.8 MB (High Resolution)',
         type: 'image/jpeg'
       });
-      setImageFile(null); // Marked as remote path
+      setImageFile(null);
     } catch (err) {
       console.error('Error loading sample:', err);
     }
@@ -148,7 +148,7 @@ export const AnalyzeView: React.FC<AnalyzeViewProps> = ({
 
   const runAnalysis = async () => {
     if (!imagePreviewUrl) {
-      setAnalysisError('Please select or upload an image to analyze.');
+      setAnalysisError('Please select or upload a waste photograph to analyze.');
       return;
     }
 
@@ -265,42 +265,44 @@ export const AnalyzeView: React.FC<AnalyzeViewProps> = ({
   const streamDef = WASTE_STREAM_DEFINITIONS[selectedStream];
 
   return (
-    <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+    <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-7 space-y-6">
       {/* Header */}
-      <div className="border-b border-[#E2E6DF] dark:border-[#1B332B] pb-5">
-        <div className="flex items-center gap-2 text-xs text-[#66736C] dark:text-[#8A9890] mb-1">
-          <span>Inspection Station</span>
-          <span aria-hidden="true">/</span>
-          <span className="text-[#102A24] dark:text-[#EAEFEA] font-semibold">New Waste Analysis</span>
+      <div className="border-b border-[#DCDDD4] dark:border-[#2B312B] pb-5">
+        <div className="flex items-center gap-2 font-mono text-[11px] text-[#777B73] dark:text-[#9DA399] uppercase tracking-wider mb-1">
+          <span>STATION 01</span>
+          <span aria-hidden="true">·</span>
+          <span>OPTICAL EVALUATION</span>
+          <span aria-hidden="true">·</span>
+          <span className="text-[#245B45] dark:text-[#3A7D63] font-semibold">STREAM TRIAGE</span>
         </div>
-        <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-[#102A24] dark:text-[#EAEFEA]">
+        <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-[#252923] dark:text-[#E6E8E3]">
           Analyze Waste Batch
         </h1>
-        <p className="text-xs sm:text-sm text-[#66736C] dark:text-[#8A9890] mt-0.5">
+        <p className="text-xs sm:text-sm text-[#777B73] dark:text-[#9DA399] mt-0.5">
           Submit an RGB photograph of waste materials for automated material identification, contamination assessment, and recycling suitability guidance.
         </p>
       </div>
 
       {/* Error Banner */}
       {analysisError && (
-        <div className="p-4 rounded-xl bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-900/50 flex items-start justify-between gap-3 text-xs">
-          <div className="flex items-start gap-2.5 text-red-700 dark:text-red-300">
-            <AlertTriangle className="w-4 h-4 text-red-600 shrink-0 mt-0.5" />
+        <div className="p-3.5 rounded-md bg-[#FBF0EE] dark:bg-[#2B1B1A] border border-[#E9BFBA] dark:border-[#522927] flex items-start justify-between gap-3 text-xs">
+          <div className="flex items-start gap-2.5 text-[#A63F37] dark:text-[#E68A82]">
+            <AlertTriangle className="w-4 h-4 shrink-0 mt-0.5" />
             <div>
-              <strong className="font-semibold block">Analysis Issue Detected</strong>
+              <strong className="font-semibold block">Inspection Issue Detected</strong>
               <p className="mt-0.5 leading-relaxed">{analysisError}</p>
             </div>
           </div>
           <div className="flex items-center gap-2 shrink-0">
             <button
               onClick={runAnalysis}
-              className="px-2.5 py-1 text-xs font-semibold bg-red-600 hover:bg-red-700 text-white rounded cursor-pointer"
+              className="px-2.5 py-1 text-xs font-semibold bg-[#A63F37] hover:bg-[#8F352E] text-white rounded cursor-pointer"
             >
-              Retry Analysis
+              Retry
             </button>
             <button
               onClick={() => setAnalysisError(null)}
-              className="p-1 text-red-600 hover:text-red-800 dark:hover:text-red-200 cursor-pointer"
+              className="p-1 text-[#A63F37] hover:text-[#7A2A24] dark:hover:text-[#FFA49C] cursor-pointer"
               aria-label="Dismiss error"
             >
               <X className="w-4 h-4" />
@@ -310,20 +312,20 @@ export const AnalyzeView: React.FC<AnalyzeViewProps> = ({
       )}
 
       {/* Main Two-Column Workflow */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-        {/* Left Column: Image Upload & Preview */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-7 items-start">
+        {/* Left Column: Image Infeed & Preview */}
         <div className="lg:col-span-7 space-y-4">
           <div className="flex items-center justify-between">
-            <h3 className="font-bold text-xs uppercase tracking-wider text-[#66736C] dark:text-[#8A9890]">
-              1. Waste Batch Image
+            <h3 className="font-mono text-xs font-bold uppercase tracking-wider text-[#777B73] dark:text-[#9DA399] flex items-center gap-1.5">
+              <span>01 // PHOTOGRAPHIC INFEED</span>
             </h3>
             {imagePreviewUrl && (
               <button
                 onClick={handleRemoveImage}
                 disabled={isAnalyzing}
-                className="text-xs font-semibold text-red-600 hover:text-red-700 flex items-center gap-1 cursor-pointer"
+                className="text-xs font-semibold text-[#A63F37] hover:text-[#8F352E] flex items-center gap-1 cursor-pointer"
               >
-                <X className="w-3.5 h-3.5" /> Replace Image
+                <X className="w-3.5 h-3.5" /> Replace Photo
               </button>
             )}
           </div>
@@ -337,10 +339,10 @@ export const AnalyzeView: React.FC<AnalyzeViewProps> = ({
               onDragLeave={() => setIsDragging(false)}
               onDrop={handleDrop}
               onClick={() => fileInputRef.current?.click()}
-              className={`border-2 border-dashed rounded-xl p-8 sm:p-12 text-center cursor-pointer transition-colors ${
+              className={`border-2 border-dashed rounded-lg p-8 sm:p-12 text-center cursor-pointer transition-colors ${
                 isDragging
-                  ? 'border-[#16A36A] bg-[#16A36A]/5'
-                  : 'border-[#E2E6DF] dark:border-[#1B332B] bg-white dark:bg-[#10221D] hover:border-[#16A36A]/60 hover:bg-[#F7F8F5] dark:hover:bg-[#15342C]'
+                  ? 'border-[#245B45] bg-[#245B45]/5'
+                  : 'border-[#DCDDD4] dark:border-[#2B312B] bg-[#FFFFFF] dark:bg-[#1C201C] hover:border-[#245B45]/70 hover:bg-[#F5F4EE] dark:hover:bg-[#22332A]/50'
               }`}
             >
               <input
@@ -351,25 +353,25 @@ export const AnalyzeView: React.FC<AnalyzeViewProps> = ({
                 className="hidden"
               />
 
-              <div className="w-12 h-12 rounded-full bg-[#16A36A]/10 text-[#16A36A] mx-auto flex items-center justify-center mb-3">
-                <UploadCloud className="w-6 h-6" />
+              <div className="w-11 h-11 rounded-md bg-[#F5F4EE] dark:bg-[#22332A] border border-[#DCDDD4] dark:border-[#2B312B] text-[#245B45] dark:text-[#3A7D63] mx-auto flex items-center justify-center mb-3">
+                <UploadCloud className="w-5 h-5" />
               </div>
 
-              <h4 className="text-sm font-semibold text-[#18251F] dark:text-[#EAEFEA]">
-                Click to browse or drag and drop a waste batch photograph
+              <h4 className="text-sm font-bold text-[#252923] dark:text-[#E6E8E3]">
+                Click to browse or drag and drop waste photograph
               </h4>
-              <p className="text-xs text-[#66736C] dark:text-[#8A9890] mt-1.5 max-w-sm mx-auto">
+              <p className="text-xs text-[#777B73] dark:text-[#9DA399] mt-1.5 max-w-sm mx-auto leading-relaxed">
                 Conveyor belt captures, bin overviews, or receiving dock samples. Supports JPEG, PNG, and WebP up to 25MB.
               </p>
 
-              <div className="mt-4 inline-flex items-center gap-2 px-3.5 py-1.5 text-xs font-semibold text-[#102A24] dark:text-[#EAEFEA] bg-[#F7F8F5] dark:bg-[#1B332B] border border-[#E2E6DF] dark:border-[#283E36] rounded-md">
-                <FileImage className="w-3.5 h-3.5 text-[#16A36A]" />
-                <span>Select File from Device</span>
+              <div className="mt-4 inline-flex items-center gap-2 px-3 py-1.5 text-xs font-semibold text-[#252923] dark:text-[#E6E8E3] bg-[#F5F4EE] dark:bg-[#22332A] border border-[#DCDDD4] dark:border-[#2B312B] rounded">
+                <FileImage className="w-3.5 h-3.5 text-[#245B45] dark:text-[#3A7D63]" />
+                <span>Select File from Station</span>
               </div>
             </div>
           ) : (
-            <div className="rounded-xl overflow-hidden border border-[#E2E6DF] dark:border-[#1B332B] bg-black shadow-xs">
-              <div className="relative aspect-[16/10] overflow-hidden flex items-center justify-center bg-[#0C1613]">
+            <div className="rounded-lg overflow-hidden border border-[#DCDDD4] dark:border-[#2B312B] bg-[#151815]">
+              <div className="relative aspect-[16/10] overflow-hidden flex items-center justify-center bg-[#151815]">
                 <img
                   src={imagePreviewUrl}
                   alt="Waste Stream Preview"
@@ -377,11 +379,13 @@ export const AnalyzeView: React.FC<AnalyzeViewProps> = ({
                 />
 
                 {isAnalyzing && (
-                  <div className="absolute inset-0 bg-[#102A24]/60 backdrop-blur-xs flex items-center justify-center">
-                    <div className="text-center text-white space-y-2 p-4">
-                      <RefreshCw className="w-8 h-8 text-[#C8F169] animate-spin mx-auto" />
-                      <div className="text-xs font-semibold">Running Computer Vision Analysis</div>
-                      <div className="text-[11px] text-[#C8F169]/90 font-mono">
+                  <div className="absolute inset-0 bg-[#151815]/75 flex items-center justify-center">
+                    <div className="text-center text-white space-y-2.5 p-4 max-w-sm">
+                      <RefreshCw className="w-7 h-7 text-[#DDE8DE] animate-spin mx-auto" />
+                      <div className="text-xs font-bold uppercase tracking-wider text-[#E6E8E3]">
+                        Running Computer Vision Inspection
+                      </div>
+                      <div className="text-[11px] text-[#DDE8DE] font-mono leading-relaxed">
                         {ANALYSIS_STAGES[activeStageIndex]}
                       </div>
                     </div>
@@ -390,39 +394,39 @@ export const AnalyzeView: React.FC<AnalyzeViewProps> = ({
               </div>
 
               {/* Metadata strip */}
-              <div className="p-3 bg-white dark:bg-[#10221D] border-t border-[#E2E6DF] dark:border-[#1B332B] flex flex-wrap items-center justify-between text-xs text-[#66736C] dark:text-[#8A9890]">
+              <div className="p-3 bg-[#FFFFFF] dark:bg-[#1C201C] border-t border-[#DCDDD4] dark:border-[#2B312B] flex flex-wrap items-center justify-between text-xs text-[#777B73] dark:text-[#9DA399]">
                 <div className="flex items-center gap-2 truncate max-w-xs">
-                  <FileImage className="w-4 h-4 text-[#16A36A] shrink-0" />
-                  <span className="font-medium text-[#18251F] dark:text-[#EAEFEA] truncate">
-                    {imageMetadata?.name || 'Uploaded Waste Image'}
+                  <FileImage className="w-4 h-4 text-[#245B45] dark:text-[#3A7D63] shrink-0" />
+                  <span className="font-semibold text-[#252923] dark:text-[#E6E8E3] truncate">
+                    {imageMetadata?.name || 'Infeed Waste Photo'}
                   </span>
                 </div>
-                <div className="flex items-center gap-3 font-mono text-[11px]">
+                <div className="flex items-center gap-2 font-mono text-[11px]">
                   <span>{imageMetadata?.size || 'Valid Size'}</span>
                   <span>·</span>
-                  <span className="text-[#16A36A] font-semibold">Ready for Assessment</span>
+                  <span className="text-[#245B45] dark:text-[#3A7D63] font-semibold">Ready for Inspection</span>
                 </div>
               </div>
             </div>
           )}
 
           {/* Demonstration Sample Batches */}
-          <div className="p-4 rounded-xl bg-white dark:bg-[#10221D] border border-[#E2E6DF] dark:border-[#1B332B] space-y-2">
-            <span className="text-xs font-semibold text-[#18251F] dark:text-[#EAEFEA] block">
-              Or load a pre-configured demonstration sample:
+          <div className="p-4 rounded-lg bg-[#FFFFFF] dark:bg-[#1C201C] border border-[#DCDDD4] dark:border-[#2B312B] space-y-2">
+            <span className="text-xs font-semibold text-[#252923] dark:text-[#E6E8E3] block">
+              Load demonstration sample image:
             </span>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
               <button
                 type="button"
                 onClick={() => loadPreloadedSample('sample-clean-segregated')}
                 disabled={isAnalyzing}
-                className="p-2.5 text-left rounded-lg border border-[#E2E6DF] dark:border-[#1B332B] hover:border-[#16A36A] hover:bg-[#F7F8F5] dark:hover:bg-[#15342C] transition-colors cursor-pointer group"
+                className="p-2.5 text-left rounded-md border border-[#DCDDD4] dark:border-[#2B312B] hover:border-[#245B45] hover:bg-[#F5F4EE] dark:hover:bg-[#22332A] transition-colors cursor-pointer group"
               >
-                <div className="text-xs font-bold text-[#102A24] dark:text-[#EAEFEA] group-hover:text-[#16A36A]">
-                  Segregated Commodities
+                <div className="text-xs font-bold text-[#252923] dark:text-[#E6E8E3] group-hover:text-[#245B45] dark:group-hover:text-[#3A7D63]">
+                  Clean Segregated
                 </div>
-                <div className="text-[10px] text-[#66736C] dark:text-[#8A9890] mt-0.5">
-                  Clean OCC, PET bottles &amp; aluminum cans
+                <div className="text-[10px] text-[#777B73] dark:text-[#9DA399] mt-0.5">
+                  OCC, PET bottles &amp; aluminum cans
                 </div>
               </button>
 
@@ -430,12 +434,12 @@ export const AnalyzeView: React.FC<AnalyzeViewProps> = ({
                 type="button"
                 onClick={() => loadPreloadedSample('sample-commercial-contaminated')}
                 disabled={isAnalyzing}
-                className="p-2.5 text-left rounded-lg border border-[#E2E6DF] dark:border-[#1B332B] hover:border-[#16A36A] hover:bg-[#F7F8F5] dark:hover:bg-[#15342C] transition-colors cursor-pointer group"
+                className="p-2.5 text-left rounded-md border border-[#DCDDD4] dark:border-[#2B312B] hover:border-[#245B45] hover:bg-[#F5F4EE] dark:hover:bg-[#22332A] transition-colors cursor-pointer group"
               >
-                <div className="text-xs font-bold text-[#102A24] dark:text-[#EAEFEA] group-hover:text-[#16A36A]">
-                  Contaminated Stream
+                <div className="text-xs font-bold text-[#252923] dark:text-[#E6E8E3] group-hover:text-[#245B45] dark:group-hover:text-[#3A7D63]">
+                  Contaminated OCC
                 </div>
-                <div className="text-[10px] text-[#66736C] dark:text-[#8A9890] mt-0.5">
+                <div className="text-[10px] text-[#777B73] dark:text-[#9DA399] mt-0.5">
                   Paperboard with plastic film wrapping
                 </div>
               </button>
@@ -444,12 +448,12 @@ export const AnalyzeView: React.FC<AnalyzeViewProps> = ({
                 type="button"
                 onClick={() => loadPreloadedSample('sample-optical-facility')}
                 disabled={isAnalyzing}
-                className="p-2.5 text-left rounded-lg border border-[#E2E6DF] dark:border-[#1B332B] hover:border-[#16A36A] hover:bg-[#F7F8F5] dark:hover:bg-[#15342C] transition-colors cursor-pointer group"
+                className="p-2.5 text-left rounded-md border border-[#DCDDD4] dark:border-[#2B312B] hover:border-[#245B45] hover:bg-[#F5F4EE] dark:hover:bg-[#22332A] transition-colors cursor-pointer group"
               >
-                <div className="text-xs font-bold text-[#102A24] dark:text-[#EAEFEA] group-hover:text-[#16A36A]">
-                  Sorting Facility Infeed
+                <div className="text-xs font-bold text-[#252923] dark:text-[#E6E8E3] group-hover:text-[#245B45] dark:group-hover:text-[#3A7D63]">
+                  Optical Sorting Line
                 </div>
-                <div className="text-[10px] text-[#66736C] dark:text-[#8A9890] mt-0.5">
+                <div className="text-[10px] text-[#777B73] dark:text-[#9DA399] mt-0.5">
                   Conveyor mixed rigid polymers
                 </div>
               </button>
@@ -458,23 +462,23 @@ export const AnalyzeView: React.FC<AnalyzeViewProps> = ({
         </div>
 
         {/* Right Column: Parameters & Execution */}
-        <div className="lg:col-span-5 space-y-5">
-          <div className="p-5 rounded-xl bg-white dark:bg-[#10221D] border border-[#E2E6DF] dark:border-[#1B332B] shadow-xs space-y-4">
-            <h3 className="font-bold text-xs uppercase tracking-wider text-[#66736C] dark:text-[#8A9890] flex items-center gap-1.5">
-              <Sliders className="w-3.5 h-3.5 text-[#16A36A]" />
-              <span>2. Inspection Parameters</span>
+        <div className="lg:col-span-5 space-y-4">
+          <div className="p-5 rounded-lg bg-[#FFFFFF] dark:bg-[#1C201C] border border-[#DCDDD4] dark:border-[#2B312B] space-y-4">
+            <h3 className="font-mono text-xs font-bold uppercase tracking-wider text-[#777B73] dark:text-[#9DA399] flex items-center gap-1.5 border-b border-[#DCDDD4] dark:border-[#2B312B] pb-2.5">
+              <Sliders className="w-3.5 h-3.5 text-[#245B45] dark:text-[#3A7D63]" />
+              <span>02 // INSPECTION PARAMETERS</span>
             </h3>
 
             {/* Waste Stream Selector */}
-            <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-[#18251F] dark:text-[#EAEFEA]">
-                Intended Waste Stream *
+            <div className="space-y-1">
+              <label className="text-xs font-semibold text-[#252923] dark:text-[#E6E8E3]">
+                Target Waste Stream *
               </label>
               <select
                 value={selectedStream}
                 onChange={(e) => setSelectedStream(e.target.value as WasteStreamType)}
                 disabled={isAnalyzing}
-                className="w-full text-xs p-2.5 bg-[#F7F8F5] dark:bg-[#15342C] border border-[#E2E6DF] dark:border-[#1B332B] rounded-lg text-[#18251F] dark:text-[#EAEFEA] focus:outline-none focus:ring-1 focus:ring-[#16A36A]"
+                className="w-full text-xs p-2.5 bg-[#F5F4EE] dark:bg-[#151815] border border-[#DCDDD4] dark:border-[#2B312B] rounded text-[#252923] dark:text-[#E6E8E3] focus:outline-none focus:ring-1 focus:ring-[#245B45]"
               >
                 <option value="SINGLE_STREAM">Single-Stream Recyclables (Mixed Curbside)</option>
                 <option value="COMMERCIAL_OCC">Commercial Paper &amp; Cardboard (OCC)</option>
@@ -487,83 +491,84 @@ export const AnalyzeView: React.FC<AnalyzeViewProps> = ({
 
             {/* Stream Tolerance Cue */}
             {streamDef && (
-              <div className="p-3 rounded-lg bg-[#F7F8F5] dark:bg-[#15342C] border border-[#E2E6DF] dark:border-[#1B332B] text-[11px] space-y-1 text-[#66736C] dark:text-[#8A9890]">
-                <div className="flex justify-between items-center text-[#18251F] dark:text-[#EAEFEA] font-semibold">
-                  <span>Stream Quality Tolerance:</span>
-                  <span className="font-mono text-[#16A36A]">Max {streamDef.standardToleranceMaxRisk}% Contamination</span>
+              <div className="p-3 rounded bg-[#F5F4EE] dark:bg-[#151815] border border-[#DCDDD4] dark:border-[#2B312B] text-[11px] space-y-1 text-[#777B73] dark:text-[#9DA399]">
+                <div className="flex justify-between items-center text-[#252923] dark:text-[#E6E8E3] font-semibold">
+                  <span>Standard Quality Tolerance:</span>
+                  <span className="font-mono text-[#245B45] dark:text-[#3A7D63]">Max {streamDef.standardToleranceMaxRisk}% Contamination</span>
                 </div>
                 <p className="leading-relaxed">{streamDef.description}</p>
-                <div className="pt-1 text-[10px] flex items-center gap-1 text-red-600 dark:text-red-400">
-                  <span className="font-semibold">Disallowed:</span> {streamDef.strictDisallowed.slice(0, 2).join(', ')}
+                <div className="pt-0.5 text-[10px] flex items-center gap-1 text-[#A63F37] dark:text-[#E68A82]">
+                  <span className="font-semibold">Strictly Prohibited:</span> {streamDef.strictDisallowed.slice(0, 2).join(', ')}
                 </div>
               </div>
             )}
 
             {/* Batch Name / ID */}
-            <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-[#18251F] dark:text-[#EAEFEA]">
+            <div className="space-y-1">
+              <label className="text-xs font-semibold text-[#252923] dark:text-[#E6E8E3]">
                 Batch / Inspection Identifier
               </label>
               <input
                 type="text"
-                placeholder="e.g. Batch-2026-OCC-01"
+                placeholder="e.g. Batch-OCC-2026-01"
                 value={batchName}
                 onChange={(e) => setBatchName(e.target.value)}
                 disabled={isAnalyzing}
-                className="w-full text-xs p-2.5 bg-[#F7F8F5] dark:bg-[#15342C] border border-[#E2E6DF] dark:border-[#1B332B] rounded-lg text-[#18251F] dark:text-[#EAEFEA] focus:outline-none focus:ring-1 focus:ring-[#16A36A]"
-              />
+                className="w-full text-xs p-2.5 bg-[#F5F4EE] dark:bg-[#151815] border border-[#DCDDD4] dark:border-[#2B312B] rounded text-[#252923] dark:text-[#E6E8E3] focus:outline-none focus:ring-1 focus:ring-[#245B45]"
+              >
+              </input>
             </div>
 
             {/* Facility Line */}
-            <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-[#18251F] dark:text-[#EAEFEA]">
-                Inspection Station / Location (Optional)
+            <div className="space-y-1">
+              <label className="text-xs font-semibold text-[#252923] dark:text-[#E6E8E3]">
+                Inspection Station / Location
               </label>
               <input
                 type="text"
                 value={facilityLine}
                 onChange={(e) => setFacilityLine(e.target.value)}
                 disabled={isAnalyzing}
-                className="w-full text-xs p-2.5 bg-[#F7F8F5] dark:bg-[#15342C] border border-[#E2E6DF] dark:border-[#1B332B] rounded-lg text-[#18251F] dark:text-[#EAEFEA] focus:outline-none focus:ring-1 focus:ring-[#16A36A]"
+                className="w-full text-xs p-2.5 bg-[#F5F4EE] dark:bg-[#151815] border border-[#DCDDD4] dark:border-[#2B312B] rounded text-[#252923] dark:text-[#E6E8E3] focus:outline-none focus:ring-1 focus:ring-[#245B45]"
               />
             </div>
 
             {/* Operator Notes */}
-            <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-[#18251F] dark:text-[#EAEFEA]">
-                Inspection Notes (Optional)
+            <div className="space-y-1">
+              <label className="text-xs font-semibold text-[#252923] dark:text-[#E6E8E3]">
+                Inspector Notes (Optional)
               </label>
               <textarea
                 rows={2}
-                placeholder="Any visual observations or sampling details..."
+                placeholder="Observations, conveyor conditions, or pre-sort sampling notes..."
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
                 disabled={isAnalyzing}
-                className="w-full text-xs p-2.5 bg-[#F7F8F5] dark:bg-[#15342C] border border-[#E2E6DF] dark:border-[#1B332B] rounded-lg text-[#18251F] dark:text-[#EAEFEA] focus:outline-none focus:ring-1 focus:ring-[#16A36A] resize-none"
+                className="w-full text-xs p-2.5 bg-[#F5F4EE] dark:bg-[#151815] border border-[#DCDDD4] dark:border-[#2B312B] rounded text-[#252923] dark:text-[#E6E8E3] focus:outline-none focus:ring-1 focus:ring-[#245B45] resize-none"
               />
             </div>
 
             {/* Analysis Progress or Trigger Button */}
             {isAnalyzing ? (
-              <div className="p-4 rounded-xl bg-[#F7F8F5] dark:bg-[#15342C] border border-[#16A36A]/40 space-y-2.5">
-                <div className="flex items-center justify-between text-xs font-semibold text-[#102A24] dark:text-[#EAEFEA]">
+              <div className="p-3.5 rounded bg-[#F5F4EE] dark:bg-[#151815] border border-[#245B45]/40 space-y-2">
+                <div className="flex items-center justify-between text-xs font-semibold text-[#252923] dark:text-[#E6E8E3]">
                   <span className="flex items-center gap-2">
-                    <RefreshCw className="w-3.5 h-3.5 text-[#16A36A] animate-spin" />
-                    Executing Visual Inspection
+                    <RefreshCw className="w-3.5 h-3.5 text-[#245B45] dark:text-[#3A7D63] animate-spin" />
+                    Executing Inspection
                   </span>
-                  <span className="font-mono text-[#16A36A]">
+                  <span className="font-mono text-[#245B45] dark:text-[#3A7D63]">
                     Stage {activeStageIndex + 1}/{ANALYSIS_STAGES.length}
                   </span>
                 </div>
 
-                <div className="w-full h-2 bg-[#E2E6DF] dark:bg-[#1B332B] rounded-full overflow-hidden">
+                <div className="w-full h-1.5 bg-[#DCDDD4] dark:bg-[#2B312B] rounded-full overflow-hidden">
                   <div
-                    className="h-full bg-[#16A36A] transition-all duration-500 rounded-full"
+                    className="h-full bg-[#245B45] dark:bg-[#3A7D63] transition-all duration-500 rounded-full"
                     style={{ width: `${((activeStageIndex + 1) / ANALYSIS_STAGES.length) * 100}%` }}
                   />
                 </div>
 
-                <p className="text-xs text-[#66736C] dark:text-[#8A9890] italic">
+                <p className="text-[11px] text-[#777B73] dark:text-[#9DA399] font-mono truncate">
                   {ANALYSIS_STAGES[activeStageIndex]}
                 </p>
               </div>
@@ -572,14 +577,14 @@ export const AnalyzeView: React.FC<AnalyzeViewProps> = ({
                 type="button"
                 onClick={runAnalysis}
                 disabled={!imagePreviewUrl}
-                className={`w-full py-3 px-4 rounded-lg font-semibold text-xs flex items-center justify-center gap-2 transition-all shadow-xs cursor-pointer ${
+                className={`w-full py-2.5 px-4 rounded font-semibold text-xs flex items-center justify-center gap-2 transition-all cursor-pointer ${
                   imagePreviewUrl
-                    ? 'bg-[#102A24] dark:bg-[#16A36A] hover:bg-[#16A36A] text-white active:scale-98'
-                    : 'bg-slate-200 dark:bg-slate-800 text-slate-400 cursor-not-allowed'
+                    ? 'bg-[#245B45] hover:bg-[#1D4B39] dark:bg-[#3A7D63] dark:hover:bg-[#2F6852] text-white active:scale-98'
+                    : 'bg-[#DCDDD4] dark:bg-[#2B312B] text-[#777B73] cursor-not-allowed'
                 }`}
               >
                 <ScanLine className="w-4 h-4" />
-                <span>Analyze Waste Batch</span>
+                <span>Execute Waste Analysis</span>
                 <ArrowRight className="w-4 h-4 ml-1" />
               </button>
             )}

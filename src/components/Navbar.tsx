@@ -1,9 +1,11 @@
 import React from 'react';
 import { Moon, Sun, ScanLine } from 'lucide-react';
 
+export type NavViewType = 'overview' | 'analyze' | 'history' | 'methodology';
+
 interface NavbarProps {
-  currentView: 'landing' | 'dashboard' | 'analyze' | 'history' | 'methodology';
-  onNavigate: (view: 'landing' | 'dashboard' | 'analyze' | 'history' | 'methodology') => void;
+  currentView: NavViewType;
+  onNavigate: (view: NavViewType) => void;
   darkMode: boolean;
   onToggleDarkMode: () => void;
 }
@@ -15,99 +17,103 @@ export const Navbar: React.FC<NavbarProps> = ({
   onToggleDarkMode
 }) => {
   return (
-    <header className="sticky top-0 z-40 w-full bg-white/95 dark:bg-[#0B1513]/95 backdrop-blur-md border-b border-[#E2E6DF] dark:border-[#1B332B] transition-colors">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-6">
-        {/* Brand wordmark with micro-project indicator */}
+    <header className="sticky top-0 z-40 w-full bg-[#FFFFFF]/95 dark:bg-[#1C201C]/95 backdrop-blur-xs border-b border-[#DCDDD4] dark:border-[#2B312B] transition-colors">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-14 flex items-center justify-between gap-6">
+        {/* Brand mark: custom geometric circular material-flow glyph & wordmark */}
         <button
-          onClick={() => onNavigate('landing')}
+          onClick={() => onNavigate('overview')}
           className="flex items-center gap-3 text-left cursor-pointer group"
+          title="EcoSort AI Quality Control System"
         >
-          <div className="w-8 h-8 rounded-lg bg-[#102A24] dark:bg-[#16A36A] text-white flex items-center justify-center font-bold text-sm tracking-tight shadow-xs">
-            ES
+          {/* Custom circular material-flow SVG glyph */}
+          <div className="w-8 h-8 rounded-md bg-[#F5F4EE] dark:bg-[#22332A] border border-[#DCDDD4] dark:border-[#2B312B] flex items-center justify-center shrink-0 group-hover:border-[#245B45] transition-colors">
+            <svg
+              className="w-4.5 h-4.5 text-[#245B45] dark:text-[#3A7D63]"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden="true"
+            >
+              <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="1.2" strokeDasharray="3 2.5" opacity="0.45" />
+              <path d="M12 3 A 9 9 0 0 1 21 12" />
+              <path d="M21 12 A 9 9 0 0 1 12 21" strokeWidth="2.6" />
+              <circle cx="12" cy="12" r="3" fill="currentColor" />
+              <path d="M12 5.5v2.5" />
+              <path d="M16 12h2.5" />
+            </svg>
           </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <span className="text-base font-extrabold tracking-tight text-[#102A24] dark:text-[#EAEFEA]">
-                EcoSort AI
-              </span>
-              <span className="hidden sm:inline-block text-[10px] font-semibold uppercase tracking-wider px-1.5 py-0.5 rounded bg-[#102A24]/5 dark:bg-[#16A36A]/15 text-[#102A24] dark:text-[#C8F169] border border-[#102A24]/10 dark:border-[#16A36A]/20">
-                Inspection System
-              </span>
-            </div>
-            <p className="hidden md:block text-[11px] text-[#66736C] dark:text-[#8A9890] font-normal leading-none mt-0.5">
-              Waste Segregation & Recycling Assessment
-            </p>
+
+          <div className="flex items-center gap-2">
+            <span className="text-sm font-extrabold tracking-tight text-[#252923] dark:text-[#E6E8E3]">
+              EcoSort AI
+            </span>
+            <span className="hidden sm:inline-block font-mono text-[10px] font-medium uppercase tracking-wider px-1.5 py-0.5 rounded-xs bg-[#F5F4EE] dark:bg-[#22332A] text-[#777B73] dark:text-[#9DA399] border border-[#DCDDD4] dark:border-[#2B312B]">
+              QC // RECYCLING
+            </span>
           </div>
         </button>
 
-        {/* Navigation links */}
-        <nav className="hidden md:flex items-center gap-6 text-xs font-semibold tracking-wide">
+        {/* Primary 4-Tab Navigation */}
+        <nav className="hidden md:flex items-center gap-1 text-xs font-semibold tracking-wide">
           <button
-            onClick={() => onNavigate('landing')}
-            className={`whitespace-nowrap transition-colors cursor-pointer py-1.5 px-1 ${
-              currentView === 'landing'
-                ? 'text-[#16A36A] dark:text-[#C8F169] border-b-2 border-[#16A36A] dark:border-[#C8F169]'
-                : 'text-[#66736C] dark:text-[#8A9890] hover:text-[#102A24] dark:hover:text-[#EAEFEA]'
+            onClick={() => onNavigate('overview')}
+            className={`px-3 py-1.5 rounded-md transition-colors cursor-pointer ${
+              currentView === 'overview'
+                ? 'bg-[#F5F4EE] dark:bg-[#22332A] text-[#245B45] dark:text-[#E6E8E3] font-bold border border-[#DCDDD4] dark:border-[#2B312B]'
+                : 'text-[#777B73] dark:text-[#9DA399] hover:text-[#252923] dark:hover:text-[#E6E8E3] hover:bg-[#F5F4EE]/60 dark:hover:bg-[#22332A]/50 border border-transparent'
             }`}
           >
-            Product Overview
-          </button>
-          <button
-            onClick={() => onNavigate('dashboard')}
-            className={`whitespace-nowrap transition-colors cursor-pointer py-1.5 px-1 ${
-              currentView === 'dashboard'
-                ? 'text-[#16A36A] dark:text-[#C8F169] border-b-2 border-[#16A36A] dark:border-[#C8F169]'
-                : 'text-[#66736C] dark:text-[#8A9890] hover:text-[#102A24] dark:hover:text-[#EAEFEA]'
-            }`}
-          >
-            Dashboard
+            Overview
           </button>
           <button
             onClick={() => onNavigate('analyze')}
-            className={`whitespace-nowrap transition-colors cursor-pointer py-1.5 px-1 ${
+            className={`px-3 py-1.5 rounded-md transition-colors cursor-pointer ${
               currentView === 'analyze'
-                ? 'text-[#16A36A] dark:text-[#C8F169] border-b-2 border-[#16A36A] dark:border-[#C8F169]'
-                : 'text-[#66736C] dark:text-[#8A9890] hover:text-[#102A24] dark:hover:text-[#EAEFEA]'
+                ? 'bg-[#F5F4EE] dark:bg-[#22332A] text-[#245B45] dark:text-[#E6E8E3] font-bold border border-[#DCDDD4] dark:border-[#2B312B]'
+                : 'text-[#777B73] dark:text-[#9DA399] hover:text-[#252923] dark:hover:text-[#E6E8E3] hover:bg-[#F5F4EE]/60 dark:hover:bg-[#22332A]/50 border border-transparent'
             }`}
           >
             Analyze Waste
           </button>
           <button
             onClick={() => onNavigate('history')}
-            className={`whitespace-nowrap transition-colors cursor-pointer py-1.5 px-1 ${
+            className={`px-3 py-1.5 rounded-md transition-colors cursor-pointer ${
               currentView === 'history'
-                ? 'text-[#16A36A] dark:text-[#C8F169] border-b-2 border-[#16A36A] dark:border-[#C8F169]'
-                : 'text-[#66736C] dark:text-[#8A9890] hover:text-[#102A24] dark:hover:text-[#EAEFEA]'
+                ? 'bg-[#F5F4EE] dark:bg-[#22332A] text-[#245B45] dark:text-[#E6E8E3] font-bold border border-[#DCDDD4] dark:border-[#2B312B]'
+                : 'text-[#777B73] dark:text-[#9DA399] hover:text-[#252923] dark:hover:text-[#E6E8E3] hover:bg-[#F5F4EE]/60 dark:hover:bg-[#22332A]/50 border border-transparent'
             }`}
           >
-            Inspection History
+            Analysis History
           </button>
           <button
             onClick={() => onNavigate('methodology')}
-            className={`whitespace-nowrap transition-colors cursor-pointer py-1.5 px-1 ${
+            className={`px-3 py-1.5 rounded-md transition-colors cursor-pointer ${
               currentView === 'methodology'
-                ? 'text-[#16A36A] dark:text-[#C8F169] border-b-2 border-[#16A36A] dark:border-[#C8F169]'
-                : 'text-[#66736C] dark:text-[#8A9890] hover:text-[#102A24] dark:hover:text-[#EAEFEA]'
+                ? 'bg-[#F5F4EE] dark:bg-[#22332A] text-[#245B45] dark:text-[#E6E8E3] font-bold border border-[#DCDDD4] dark:border-[#2B312B]'
+                : 'text-[#777B73] dark:text-[#9DA399] hover:text-[#252923] dark:hover:text-[#E6E8E3] hover:bg-[#F5F4EE]/60 dark:hover:bg-[#22332A]/50 border border-transparent'
             }`}
           >
-            Standards
+            Methodology
           </button>
         </nav>
 
-        {/* Action & Theme Toggle */}
+        {/* Actions & Restrained Theme Toggle */}
         <div className="flex items-center gap-2.5 shrink-0">
           <button
             onClick={onToggleDarkMode}
-            className="p-2 rounded-lg text-[#66736C] hover:text-[#102A24] dark:text-[#8A9890] dark:hover:text-[#EAEFEA] hover:bg-[#F2F4EF] dark:hover:bg-[#12211C] transition-colors cursor-pointer border border-transparent hover:border-[#E2E6DF] dark:hover:border-[#1B332B]"
+            className="p-1.5 rounded-md text-[#777B73] hover:text-[#252923] dark:text-[#9DA399] dark:hover:text-[#E6E8E3] hover:bg-[#F5F4EE] dark:hover:bg-[#22332A] border border-[#DCDDD4] dark:border-[#2B312B] transition-colors cursor-pointer"
             aria-label={darkMode ? "Switch to light theme" : "Switch to dark theme"}
             title={darkMode ? "Switch to light theme" : "Switch to dark theme"}
           >
-            {darkMode ? <Sun className="w-4 h-4 text-[#C8F169]" /> : <Moon className="w-4 h-4" />}
+            {darkMode ? <Sun className="w-4 h-4 text-[#E6E8E3]" /> : <Moon className="w-4 h-4" />}
           </button>
 
           <button
             onClick={() => onNavigate('analyze')}
-            className="inline-flex items-center gap-2 px-3.5 py-2 text-xs font-semibold text-white bg-[#102A24] dark:bg-[#16A36A] hover:bg-[#16A36A] dark:hover:bg-[#128354] rounded-lg transition-colors shadow-xs cursor-pointer whitespace-nowrap shrink-0 active:scale-98"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-white bg-[#245B45] hover:bg-[#1D4B39] dark:bg-[#3A7D63] dark:hover:bg-[#2F6852] rounded-md transition-colors cursor-pointer shadow-xs whitespace-nowrap active:scale-98"
           >
             <ScanLine className="w-3.5 h-3.5" />
             <span>Analyze Waste</span>
