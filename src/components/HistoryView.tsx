@@ -10,7 +10,9 @@ import {
   AlertTriangle,
   XCircle,
   FileSpreadsheet,
-  X
+  X,
+  Info,
+  ScanLine
 } from 'lucide-react';
 import { AnalysisResult, WasteStreamType, ContaminationRiskLevel } from '../types/index.ts';
 
@@ -100,45 +102,54 @@ export const HistoryView: React.FC<HistoryViewProps> = ({
   return (
     <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-[#E2E6DF] dark:border-[#1C2B25] pb-5">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-[#E2E6DF] dark:border-[#1B332B] pb-5">
         <div>
-          <div className="flex items-center gap-2 text-xs text-[#737D75] dark:text-[#85948A] mb-1">
-            <span>Repository</span>
+          <div className="flex items-center gap-2 text-xs text-[#66736C] dark:text-[#8A9890] mb-1">
+            <span>Register</span>
             <span aria-hidden="true">/</span>
-            <span className="text-[#18251F] dark:text-[#EAEFEA] font-medium">Historical Inspection Audits</span>
+            <span className="text-[#102A24] dark:text-[#EAEFEA] font-semibold">Inspection Records</span>
           </div>
           <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-[#102A24] dark:text-[#EAEFEA]">
-            Analysis History
+            Inspection History
           </h1>
-          <p className="text-xs sm:text-sm text-[#737D75] dark:text-[#85948A] mt-0.5">
-            Search, filter, and review historical computer vision assessments across MRF lines.
+          <p className="text-xs sm:text-sm text-[#66736C] dark:text-[#8A9890] mt-0.5">
+            Search, filter, and review historical visual assessments and contamination scores.
           </p>
         </div>
 
         <button
           onClick={onNewAnalysis}
-          className="inline-flex items-center gap-2 px-4 py-2.5 text-xs font-semibold text-white bg-[#102A24] dark:bg-[#16A36A] hover:bg-[#16A36A] dark:hover:bg-[#128354] rounded-lg transition-all shadow-sm active:scale-95 cursor-pointer whitespace-nowrap shrink-0 self-start sm:self-auto"
+          className="inline-flex items-center gap-2 px-3.5 py-2 text-xs font-semibold text-white bg-[#102A24] dark:bg-[#16A36A] hover:bg-[#16A36A] dark:hover:bg-[#128354] rounded-lg transition-colors shadow-xs active:scale-98 cursor-pointer whitespace-nowrap shrink-0 self-start sm:self-auto"
         >
-          <span>Run New Scan</span>
+          <ScanLine className="w-3.5 h-3.5" />
+          <span>New Inspection</span>
         </button>
       </div>
 
+      {/* In-memory storage disclaimer */}
+      <div className="flex items-center gap-2 px-3.5 py-2 rounded-lg bg-[#F7F8F5] dark:bg-[#10221D] border border-[#E2E6DF] dark:border-[#1B332B] text-xs text-[#66736C] dark:text-[#8A9890]">
+        <Info className="w-4 h-4 text-[#16A36A] shrink-0" />
+        <span>
+          <strong className="font-semibold text-[#18251F] dark:text-[#EAEFEA]">In-Memory Register:</strong> Records are stored in server memory for the duration of the current session.
+        </span>
+      </div>
+
       {/* Filters & Search Toolbar */}
-      <div className="p-4 rounded-xl bg-white dark:bg-[#102A24] border border-[#E2E6DF] dark:border-[#1E352F] shadow-sm flex flex-col md:flex-row items-stretch md:items-center gap-3">
+      <div className="p-3.5 rounded-xl bg-white dark:bg-[#10221D] border border-[#E2E6DF] dark:border-[#1B332B] shadow-xs flex flex-col md:flex-row items-stretch md:items-center gap-3">
         {/* Search Input */}
         <div className="relative flex-1">
-          <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-[#737D75]" />
+          <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-[#66736C]" />
           <input
             type="text"
             placeholder="Search by batch name, notes, or station..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-9 pr-3 py-2 text-xs bg-[#F7F8F5] dark:bg-[#15342C] border border-[#E2E6DF] dark:border-[#1E352F] rounded-lg text-[#18251F] dark:text-[#EAEFEA] focus:outline-none focus:ring-1 focus:ring-[#16A36A]"
+            className="w-full pl-9 pr-8 py-2 text-xs bg-[#F7F8F5] dark:bg-[#15342C] border border-[#E2E6DF] dark:border-[#1B332B] rounded-lg text-[#18251F] dark:text-[#EAEFEA] focus:outline-none focus:ring-1 focus:ring-[#16A36A]"
           />
           {searchQuery && (
             <button
               onClick={() => setSearchQuery('')}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-[#737D75] hover:text-[#18251F]"
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-[#66736C] hover:text-[#18251F] cursor-pointer"
             >
               <X className="w-3.5 h-3.5" />
             </button>
@@ -147,11 +158,11 @@ export const HistoryView: React.FC<HistoryViewProps> = ({
 
         {/* Stream Filter */}
         <div className="flex items-center gap-2">
-          <Filter className="w-3.5 h-3.5 text-[#737D75] shrink-0" />
+          <Filter className="w-3.5 h-3.5 text-[#66736C] shrink-0" />
           <select
             value={streamFilter}
             onChange={(e) => setStreamFilter(e.target.value)}
-            className="text-xs p-2 bg-[#F7F8F5] dark:bg-[#15342C] border border-[#E2E6DF] dark:border-[#1E352F] rounded-lg text-[#18251F] dark:text-[#EAEFEA] focus:outline-none"
+            className="text-xs p-2 bg-[#F7F8F5] dark:bg-[#15342C] border border-[#E2E6DF] dark:border-[#1B332B] rounded-lg text-[#18251F] dark:text-[#EAEFEA] focus:outline-none"
           >
             <option value="ALL">All Waste Streams</option>
             <option value="SINGLE_STREAM">Single-Stream</option>
@@ -168,7 +179,7 @@ export const HistoryView: React.FC<HistoryViewProps> = ({
           <select
             value={riskFilter}
             onChange={(e) => setRiskFilter(e.target.value)}
-            className="text-xs p-2 bg-[#F7F8F5] dark:bg-[#15342C] border border-[#E2E6DF] dark:border-[#1E352F] rounded-lg text-[#18251F] dark:text-[#EAEFEA] focus:outline-none"
+            className="text-xs p-2 bg-[#F7F8F5] dark:bg-[#15342C] border border-[#E2E6DF] dark:border-[#1B332B] rounded-lg text-[#18251F] dark:text-[#EAEFEA] focus:outline-none"
           >
             <option value="ALL">All Risk Tiers</option>
             <option value="LOW">Low Risk</option>
@@ -182,7 +193,7 @@ export const HistoryView: React.FC<HistoryViewProps> = ({
         <button
           onClick={fetchHistory}
           disabled={isLoading}
-          className="p-2 text-xs rounded-lg border border-[#E2E6DF] dark:border-[#1E352F] text-[#737D75] hover:text-[#18251F] dark:hover:text-white transition-colors cursor-pointer self-end md:self-auto"
+          className="p-2 text-xs rounded-lg border border-[#E2E6DF] dark:border-[#1B332B] text-[#66736C] hover:text-[#18251F] dark:hover:text-white transition-colors cursor-pointer self-end md:self-auto"
           title="Refresh table"
         >
           <RefreshCw className={`w-3.5 h-3.5 ${isLoading ? 'animate-spin' : ''}`} />
@@ -190,63 +201,64 @@ export const HistoryView: React.FC<HistoryViewProps> = ({
       </div>
 
       {/* Desktop Data Table */}
-      <div className="rounded-xl bg-white dark:bg-[#102A24] border border-[#E2E6DF] dark:border-[#1E352F] shadow-sm overflow-hidden hidden md:block">
+      <div className="rounded-xl bg-white dark:bg-[#10221D] border border-[#E2E6DF] dark:border-[#1B332B] shadow-xs overflow-hidden hidden md:block">
         <table className="w-full text-left border-collapse text-xs">
           <thead>
-            <tr className="border-b border-[#E2E6DF] dark:border-[#1C2B25] text-[#737D75] dark:text-[#85948A] bg-[#F7F8F5]/60 dark:bg-[#0D1614]/60">
+            <tr className="border-b border-[#E2E6DF] dark:border-[#1B332B] text-[#66736C] dark:text-[#8A9890] bg-[#F7F8F5]/60 dark:bg-[#0C1613]/60">
               <th
                 onClick={() => toggleSort('batchName')}
-                className="py-3.5 px-4 font-semibold cursor-pointer hover:text-[#18251F] dark:hover:text-[#EAEFEA]"
+                className="py-3.5 px-4 font-semibold cursor-pointer hover:text-[#102A24] dark:hover:text-[#EAEFEA]"
               >
                 <div className="flex items-center gap-1.5">
                   <span>Batch Identifier</span>
-                  <ArrowUpDown className="w-3 h-3 text-[#737D75]" />
+                  <ArrowUpDown className="w-3 h-3 text-[#66736C]" />
                 </div>
               </th>
               <th className="py-3.5 px-4 font-semibold">Stream</th>
               <th
                 onClick={() => toggleSort('contaminationScore')}
-                className="py-3.5 px-4 font-semibold text-right cursor-pointer hover:text-[#18251F] dark:hover:text-[#EAEFEA]"
+                className="py-3.5 px-4 font-semibold text-right cursor-pointer hover:text-[#102A24] dark:hover:text-[#EAEFEA]"
               >
                 <div className="flex items-center justify-end gap-1.5">
                   <span>Contamination</span>
-                  <ArrowUpDown className="w-3 h-3 text-[#737D75]" />
+                  <ArrowUpDown className="w-3 h-3 text-[#66736C]" />
                 </div>
               </th>
               <th
                 onClick={() => toggleSort('purityIndex')}
-                className="py-3.5 px-4 font-semibold text-right cursor-pointer hover:text-[#18251F] dark:hover:text-[#EAEFEA]"
+                className="py-3.5 px-4 font-semibold text-right cursor-pointer hover:text-[#102A24] dark:hover:text-[#EAEFEA]"
               >
                 <div className="flex items-center justify-end gap-1.5">
                   <span>Purity Index</span>
-                  <ArrowUpDown className="w-3 h-3 text-[#737D75]" />
+                  <ArrowUpDown className="w-3 h-3 text-[#66736C]" />
                 </div>
               </th>
-              <th className="py-3.5 px-4 font-semibold">Classification</th>
+              <th className="py-3.5 px-4 font-semibold">Risk Tier</th>
+              <th className="py-3.5 px-4 font-semibold">Suitability</th>
               <th
                 onClick={() => toggleSort('createdAt')}
-                className="py-3.5 px-4 font-semibold cursor-pointer hover:text-[#18251F] dark:hover:text-[#EAEFEA]"
+                className="py-3.5 px-4 font-semibold cursor-pointer hover:text-[#102A24] dark:hover:text-[#EAEFEA]"
               >
                 <div className="flex items-center gap-1.5">
-                  <span>Timestamp</span>
-                  <ArrowUpDown className="w-3 h-3 text-[#737D75]" />
+                  <span>Date &amp; Time</span>
+                  <ArrowUpDown className="w-3 h-3 text-[#66736C]" />
                 </div>
               </th>
               <th className="py-3.5 px-4 font-semibold text-right">Actions</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-[#E2E6DF] dark:divide-[#1C2B25]">
+          <tbody className="divide-y divide-[#E2E6DF] dark:divide-[#1B332B]">
             {isLoading ? (
-              // Skeletons
               [1, 2, 3, 4].map((n) => (
                 <tr key={n} className="animate-pulse">
-                  <td className="py-4 px-4"><div className="h-4 bg-[#E2E6DF] dark:bg-[#1E352F] rounded w-32" /></td>
-                  <td className="py-4 px-4"><div className="h-4 bg-[#E2E6DF] dark:bg-[#1E352F] rounded w-20" /></td>
-                  <td className="py-4 px-4 text-right"><div className="h-4 bg-[#E2E6DF] dark:bg-[#1E352F] rounded w-12 ml-auto" /></td>
-                  <td className="py-4 px-4 text-right"><div className="h-4 bg-[#E2E6DF] dark:bg-[#1E352F] rounded w-12 ml-auto" /></td>
-                  <td className="py-4 px-4"><div className="h-4 bg-[#E2E6DF] dark:bg-[#1E352F] rounded w-24" /></td>
-                  <td className="py-4 px-4"><div className="h-4 bg-[#E2E6DF] dark:bg-[#1E352F] rounded w-28" /></td>
-                  <td className="py-4 px-4 text-right"><div className="h-4 bg-[#E2E6DF] dark:bg-[#1E352F] rounded w-16 ml-auto" /></td>
+                  <td className="py-4 px-4"><div className="h-4 bg-[#E2E6DF] dark:bg-[#1B332B] rounded w-32" /></td>
+                  <td className="py-4 px-4"><div className="h-4 bg-[#E2E6DF] dark:bg-[#1B332B] rounded w-20" /></td>
+                  <td className="py-4 px-4 text-right"><div className="h-4 bg-[#E2E6DF] dark:bg-[#1B332B] rounded w-12 ml-auto" /></td>
+                  <td className="py-4 px-4 text-right"><div className="h-4 bg-[#E2E6DF] dark:bg-[#1B332B] rounded w-12 ml-auto" /></td>
+                  <td className="py-4 px-4"><div className="h-4 bg-[#E2E6DF] dark:bg-[#1B332B] rounded w-16" /></td>
+                  <td className="py-4 px-4"><div className="h-4 bg-[#E2E6DF] dark:bg-[#1B332B] rounded w-24" /></td>
+                  <td className="py-4 px-4"><div className="h-4 bg-[#E2E6DF] dark:bg-[#1B332B] rounded w-28" /></td>
+                  <td className="py-4 px-4 text-right"><div className="h-4 bg-[#E2E6DF] dark:bg-[#1B332B] rounded w-16 ml-auto" /></td>
                 </tr>
               ))
             ) : sortedItems.length > 0 ? (
@@ -261,16 +273,29 @@ export const HistoryView: React.FC<HistoryViewProps> = ({
                   >
                     <td className="py-3.5 px-4 font-medium text-[#18251F] dark:text-[#EAEFEA]">
                       <div className="font-semibold">{item.batchName}</div>
-                      <div className="text-[10px] text-[#737D75] dark:text-[#85948A]">{item.facilityLine || 'Line 01'}</div>
+                      <div className="text-[10px] text-[#66736C] dark:text-[#8A9890]">{item.facilityLine || 'Line 01'}</div>
                     </td>
-                    <td className="py-3.5 px-4 text-[#737D75] dark:text-[#85948A]">
-                      {item.wasteStream.replace('_', ' ')}
+                    <td className="py-3.5 px-4 text-[#66736C] dark:text-[#8A9890]">
+                      {item.wasteStream.replace(/_/g, ' ')}
                     </td>
                     <td className="py-3.5 px-4 text-right font-mono font-semibold tabular-nums text-[#18251F] dark:text-[#EAEFEA]">
                       {item.contaminationScore.toFixed(1)}%
                     </td>
                     <td className="py-3.5 px-4 text-right font-mono font-semibold tabular-nums text-[#16A36A]">
                       {item.purityIndex.toFixed(1)}%
+                    </td>
+                    <td className="py-3.5 px-4">
+                      <span className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded ${
+                        item.overallRisk === 'LOW'
+                          ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300'
+                          : item.overallRisk === 'MODERATE'
+                          ? 'bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-300'
+                          : item.overallRisk === 'HIGH'
+                          ? 'bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300'
+                          : 'bg-red-100 text-red-800 dark:bg-red-950 dark:text-red-300'
+                      }`}>
+                        {item.overallRisk}
+                      </span>
                     </td>
                     <td className="py-3.5 px-4">
                       <span className={`inline-flex items-center gap-1 font-medium ${
@@ -290,13 +315,13 @@ export const HistoryView: React.FC<HistoryViewProps> = ({
                         <span>{item.streamSuitability.replace(/_/g, ' ')}</span>
                       </span>
                     </td>
-                    <td className="py-3.5 px-4 text-[#737D75] dark:text-[#85948A]">
+                    <td className="py-3.5 px-4 text-[#66736C] dark:text-[#8A9890]">
                       {new Date(item.createdAt).toLocaleDateString([], { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
                     </td>
-                    <td className="py-3.5 px-4 text-right space-x-1.5">
+                    <td className="py-3.5 px-4 text-right space-x-1">
                       <button
                         onClick={() => onViewAnalysis(item)}
-                        className="p-1.5 rounded hover:bg-[#E2E6DF] dark:hover:bg-[#1E352F] text-[#18251F] dark:text-[#EAEFEA] transition-colors cursor-pointer"
+                        className="p-1.5 rounded hover:bg-[#E2E6DF] dark:hover:bg-[#1B332B] text-[#18251F] dark:text-[#EAEFEA] transition-colors cursor-pointer"
                         title="View Full Report"
                       >
                         <Eye className="w-3.5 h-3.5" />
@@ -314,7 +339,7 @@ export const HistoryView: React.FC<HistoryViewProps> = ({
               })
             ) : (
               <tr>
-                <td colSpan={7} className="p-8 text-center text-xs text-[#737D75] dark:text-[#85948A]">
+                <td colSpan={8} className="p-8 text-center text-xs text-[#66736C] dark:text-[#8A9890]">
                   No historical audits matching search and filter parameters.
                 </td>
               </tr>
@@ -326,22 +351,22 @@ export const HistoryView: React.FC<HistoryViewProps> = ({
       {/* Mobile Responsive Cards */}
       <div className="grid grid-cols-1 gap-3 md:hidden">
         {isLoading ? (
-          <div className="p-4 text-xs text-[#737D75] text-center">Loading audit history...</div>
+          <div className="p-4 text-xs text-[#66736C] text-center">Loading audit history...</div>
         ) : sortedItems.length > 0 ? (
           sortedItems.map((item) => (
             <div
               key={item.id}
-              className="p-4 rounded-xl bg-white dark:bg-[#102A24] border border-[#E2E6DF] dark:border-[#1E352F] space-y-3"
+              className="p-4 rounded-xl bg-white dark:bg-[#10221D] border border-[#E2E6DF] dark:border-[#1B332B] space-y-2.5"
             >
               <div className="flex items-start justify-between">
                 <div>
                   <h4 className="font-semibold text-xs text-[#18251F] dark:text-[#EAEFEA]">{item.batchName}</h4>
-                  <p className="text-[11px] text-[#737D75] dark:text-[#85948A]">{item.wasteStream.replace('_', ' ')}</p>
+                  <p className="text-[11px] text-[#66736C] dark:text-[#8A9890]">{item.wasteStream.replace(/_/g, ' ')}</p>
                 </div>
                 <span className="font-mono text-xs font-bold text-[#16A36A]">{item.purityIndex.toFixed(1)}% Purity</span>
               </div>
 
-              <div className="flex items-center justify-between text-xs text-[#737D75] dark:text-[#85948A] border-t border-[#E2E6DF] dark:border-[#1E352F] pt-2">
+              <div className="flex items-center justify-between text-xs text-[#66736C] dark:text-[#8A9890] border-t border-[#E2E6DF] dark:border-[#1B332B] pt-2">
                 <span>{item.streamSuitability.replace(/_/g, ' ')}</span>
                 <span className="font-mono text-[11px]">
                   {new Date(item.createdAt).toLocaleDateString([], { month: 'short', day: 'numeric' })}
@@ -351,13 +376,13 @@ export const HistoryView: React.FC<HistoryViewProps> = ({
               <div className="flex items-center justify-end gap-2 pt-1">
                 <button
                   onClick={() => onViewAnalysis(item)}
-                  className="px-3 py-1.5 text-xs font-medium bg-[#16A36A] text-white rounded-lg flex items-center gap-1"
+                  className="px-3 py-1.5 text-xs font-semibold bg-[#16A36A] text-white rounded-md flex items-center gap-1"
                 >
-                  <Eye className="w-3 h-3" /> View
+                  <Eye className="w-3 h-3" /> View Report
                 </button>
                 <button
                   onClick={() => setItemToDelete(item)}
-                  className="px-2 py-1.5 text-xs text-red-600 rounded-lg hover:bg-red-50"
+                  className="px-2 py-1.5 text-xs text-red-600 rounded-md hover:bg-red-50 dark:hover:bg-red-950/40"
                 >
                   <Trash2 className="w-3.5 h-3.5" />
                 </button>
@@ -365,32 +390,32 @@ export const HistoryView: React.FC<HistoryViewProps> = ({
             </div>
           ))
         ) : (
-          <div className="p-8 text-center text-xs text-[#737D75]">
-            No audits found.
+          <div className="p-8 text-center text-xs text-[#66736C]">
+            No records found.
           </div>
         )}
       </div>
 
       {/* Confirmation Dialog for Deletion */}
       {itemToDelete && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-          <div className="w-full max-w-sm rounded-2xl bg-white dark:bg-[#102A24] p-6 border border-[#E2E6DF] dark:border-[#1E352F] shadow-2xl space-y-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-xs p-4">
+          <div className="w-full max-w-sm rounded-xl bg-white dark:bg-[#10221D] p-5 border border-[#E2E6DF] dark:border-[#1B332B] shadow-lg space-y-3">
             <h3 className="font-bold text-sm text-[#18251F] dark:text-[#EAEFEA]">
-              Delete Audit Record?
+              Delete Inspection Record?
             </h3>
-            <p className="text-xs text-[#737D75] dark:text-[#85948A] leading-relaxed">
-              Are you sure you want to permanently remove <span className="font-semibold text-[#18251F] dark:text-[#EAEFEA]">{itemToDelete.batchName}</span> from the historical database? This action cannot be reversed.
+            <p className="text-xs text-[#66736C] dark:text-[#8A9890] leading-relaxed">
+              Are you sure you want to remove <strong className="text-[#18251F] dark:text-[#EAEFEA]">{itemToDelete.batchName}</strong> from this session's history?
             </p>
-            <div className="flex items-center justify-end gap-2.5 pt-2">
+            <div className="flex items-center justify-end gap-2 pt-2">
               <button
                 onClick={() => setItemToDelete(null)}
-                className="px-3 py-2 text-xs font-medium text-[#737D75] hover:text-[#18251F] rounded-lg transition-colors cursor-pointer"
+                className="px-3 py-1.5 text-xs font-medium text-[#66736C] hover:text-[#18251F] dark:hover:text-[#EAEFEA] transition-colors cursor-pointer"
               >
                 Cancel
               </button>
               <button
                 onClick={confirmDelete}
-                className="px-3 py-2 text-xs font-semibold text-white bg-red-600 hover:bg-red-700 rounded-lg transition-colors cursor-pointer"
+                className="px-3 py-1.5 text-xs font-semibold text-white bg-red-600 hover:bg-red-700 rounded-md transition-colors cursor-pointer"
               >
                 Confirm Delete
               </button>

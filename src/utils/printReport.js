@@ -41,7 +41,7 @@ export function printAnalysisReport(result) {
           <td style="padding: 6px 10px; border: 1px solid #d1d5db;">${escapeHtml(m.category || 'General')}</td>
           <td style="text-align: right; font-family: monospace; font-weight: 700; padding: 6px 10px; border: 1px solid #d1d5db;">${Number(m.estimatedPercentage || 0)}%</td>
           <td style="text-align: right; font-family: monospace; padding: 6px 10px; border: 1px solid #d1d5db;">${Number(m.confidence || 0)}%</td>
-          <td style="text-align: center; padding: 6px 10px; border: 1px solid #d1d5db;">${m.recyclableInStream ? '✓ Target Recyclable' : '✗ Non-Target / Contaminant'}</td>
+          <td style="text-align: center; padding: 6px 10px; border: 1px solid #d1d5db;">${m.recyclableInStream ? '✓ Compatible Target' : '✗ Non-Target / Contaminant'}</td>
         </tr>
       `).join('')
     : '<tr><td colspan="5" style="text-align: center; color: #666; padding: 8px; border: 1px solid #d1d5db;">No individual materials categorized.</td></tr>';
@@ -51,114 +51,116 @@ export function printAnalysisReport(result) {
     ? alerts.map((a, idx) => `
         <div style="border: 1px solid #d1d5db; border-radius: 6px; padding: 10px 14px; margin-bottom: 10px; page-break-inside: avoid; background-color: #ffffff;">
           <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px;">
-            <strong style="font-size: 11pt; color: #111827;">${idx + 1}. ${escapeHtml(a.item || 'Flagged Contaminant')}</strong>
-            <span style="font-size: 8.5pt; font-weight: 700; text-transform: uppercase; border: 1px solid #111827; padding: 2px 6px; border-radius: 4px; color: #111827;">
+            <strong style="font-size: 10.5pt; color: #111827;">${idx + 1}. ${escapeHtml(a.item || 'Flagged Contaminant')}</strong>
+            <span style="font-size: 8pt; font-weight: 700; text-transform: uppercase; border: 1px solid #111827; padding: 2px 6px; border-radius: 4px; color: #111827;">
               ${escapeHtml(a.severity || 'NOTICE')}
             </span>
           </div>
-          <p style="margin: 0 0 6px 0; font-size: 10pt; color: #374151;">${escapeHtml(a.description || '')}</p>
-          <div style="background-color: #f9fafb; border-left: 3px solid #111827; padding: 6px 10px; font-size: 9.5pt; margin-top: 4px;">
-            <div><strong style="color: #111827;">Visual Signature:</strong> ${escapeHtml(a.visualEvidence || 'None documented')}</div>
-            <div style="margin-top: 3px;"><strong style="color: #111827;">Corrective Protocol:</strong> ${escapeHtml(a.correctiveAction || 'Standard sorting line divert')}</div>
+          <p style="margin: 0 0 6px 0; font-size: 9.5pt; color: #374151;">${escapeHtml(a.description || '')}</p>
+          <div style="background-color: #f9fafb; border-left: 3px solid #111827; padding: 6px 10px; font-size: 9pt; margin-top: 4px;">
+            <div><strong style="color: #111827;">Visual Evidence:</strong> ${escapeHtml(a.visualEvidence || 'None documented')}</div>
+            <div style="margin-top: 3px;"><strong style="color: #111827;">Corrective Action:</strong> ${escapeHtml(a.correctiveAction || 'Standard sorting line divert')}</div>
           </div>
         </div>
       `).join('')
-    : '<p style="color: #4b5563; font-style: italic; margin-bottom: 16px;">Zero critical contamination alerts detected. Batch satisfies pure commodity threshold.</p>';
+    : '<p style="color: #4b5563; font-style: italic; margin-bottom: 16px;">Zero critical contamination alerts detected. Batch satisfies stream purity threshold.</p>';
 
   // Generate checklist rows
   const checklistHtml = checklist.length > 0
     ? checklist.map((c) => `
         <li style="margin-bottom: 8px; page-break-inside: avoid;">
           <strong style="color: #111827;">Step ${c.step || '•'}: ${escapeHtml(c.title || '')}</strong>
-          ${c.priority ? `<span style="font-size: 8.5pt; text-transform: uppercase; font-weight: 700; margin-left: 6px; color: #4b5563;">[Priority: ${escapeHtml(c.priority)}]</span>` : ''}
+          ${c.priority ? `<span style="font-size: 8pt; text-transform: uppercase; font-weight: 700; margin-left: 6px; color: #4b5563;">[Priority: ${escapeHtml(c.priority)}]</span>` : ''}
           <div style="font-size: 9.5pt; color: #374151; margin-top: 2px;">${escapeHtml(c.description || '')}</div>
-          ${c.estimatedDivertRate ? `<div style="font-size: 9pt; color: #111827; font-weight: 600; margin-top: 2px;">Estimated Divert Impact: ${escapeHtml(c.estimatedDivertRate)}</div>` : ''}
+          ${c.estimatedDivertRate ? `<div style="font-size: 8.5pt; color: #111827; font-weight: 600; margin-top: 2px;">Estimated Divert Impact: ${escapeHtml(c.estimatedDivertRate)}</div>` : ''}
         </li>
       `).join('')
     : '<p style="color: #4b5563; font-style: italic; margin-bottom: 16px;">No specific operational sorting steps required for this batch.</p>';
 
-  // Generate supervisor recommendations
+  // Generate recommendations
   const recommendationsHtml = recommendations.length > 0
-    ? recommendations.map((r) => `<li style="margin-bottom: 6px; color: #374151;">${escapeHtml(r)}</li>`).join('')
+    ? recommendations.map((r) => `<li style="margin-bottom: 5px; color: #374151;">${escapeHtml(r)}</li>`).join('')
     : '<li style="color: #666;">Standard facility operational conveyor procedures apply.</li>';
 
-  // Construct report inner markup
+  // Construct report markup
   const reportContent = `
     <!-- Header Block -->
-    <table style="width: 100%; border-bottom: 2px solid #111827; padding-bottom: 12px; margin-bottom: 18px; border-collapse: collapse;">
+    <table style="width: 100%; border-bottom: 2px solid #111827; padding-bottom: 10px; margin-bottom: 16px; border-collapse: collapse;">
       <tr>
         <td style="vertical-align: top; border: none; padding: 0;">
-          <div style="font-size: 20pt; font-weight: 800; letter-spacing: -0.5px; color: #111827; line-height: 1.1;">EcoSort AI</div>
-          <div style="font-size: 9.5pt; color: #4b5563; margin-top: 4px; text-transform: uppercase; letter-spacing: 0.5px;">Optical Waste Stream & Contamination Intelligence Report</div>
+          <div style="font-size: 18pt; font-weight: 800; letter-spacing: -0.5px; color: #111827; line-height: 1.1;">EcoSort AI</div>
+          <div style="font-size: 9pt; color: #4b5563; margin-top: 3px; text-transform: uppercase; letter-spacing: 0.5px;">
+            AI-Based Intelligent Waste Segregation &amp; Recycling Assessment System
+          </div>
         </td>
-        <td style="text-align: right; vertical-align: top; font-size: 9.5pt; color: #4b5563; border: none; padding: 0;">
+        <td style="text-align: right; vertical-align: top; font-size: 9pt; color: #4b5563; border: none; padding: 0;">
           <div><strong style="color: #111827;">Document ID:</strong> ${escapeHtml(result.id || 'N/A')}</div>
-          <div><strong style="color: #111827;">Generated:</strong> ${escapeHtml(formattedDate)}</div>
+          <div><strong style="color: #111827;">Inspected:</strong> ${escapeHtml(formattedDate)}</div>
           <div><strong style="color: #111827;">Target Stream:</strong> ${escapeHtml((result.wasteStream || '').replace(/_/g, ' '))}</div>
         </td>
       </tr>
     </table>
 
     <!-- Batch Metadata Card -->
-    <div style="border: 1px solid #d1d5db; border-radius: 6px; padding: 10px 14px; margin-bottom: 16px; background-color: #fafafa;">
-      <table style="width: 100%; border-collapse: collapse; font-size: 9.5pt;">
+    <div style="border: 1px solid #d1d5db; border-radius: 6px; padding: 8px 12px; margin-bottom: 14px; background-color: #fafafa;">
+      <table style="width: 100%; border-collapse: collapse; font-size: 9pt;">
         <tr>
-          <td style="border: none; padding: 3px 8px 3px 0; width: 50%;"><strong style="color: #111827;">Batch Identifier:</strong> ${escapeHtml(result.batchName || 'Unassigned')}</td>
-          <td style="border: none; padding: 3px 0 3px 8px; width: 50%;"><strong style="color: #111827;">Quality Outcome:</strong> ${escapeHtml((result.streamSuitability || '').replace(/_/g, ' '))}</td>
+          <td style="border: none; padding: 2px 8px 2px 0; width: 50%;"><strong style="color: #111827;">Batch Identifier:</strong> ${escapeHtml(result.batchName || 'Unassigned')}</td>
+          <td style="border: none; padding: 2px 0 2px 8px; width: 50%;"><strong style="color: #111827;">Recycling Suitability:</strong> ${escapeHtml((result.streamSuitability || '').replace(/_/g, ' '))}</td>
         </tr>
         <tr>
-          <td style="border: none; padding: 3px 8px 3px 0;"><strong style="color: #111827;">Inspection Station:</strong> ${escapeHtml(result.facilityLine || 'Standard Optical Infeed')}</td>
-          <td style="border: none; padding: 3px 0 3px 8px;"><strong style="color: #111827;">Risk Classification:</strong> ${escapeHtml(result.overallRisk || 'N/A')} Risk Tier</td>
+          <td style="border: none; padding: 2px 8px 2px 0;"><strong style="color: #111827;">Inspection Station:</strong> ${escapeHtml(result.facilityLine || 'Standard Inspection Point')}</td>
+          <td style="border: none; padding: 2px 0 2px 8px;"><strong style="color: #111827;">Risk Tier:</strong> ${escapeHtml(result.overallRisk || 'N/A')}</td>
         </tr>
         ${result.operatorNotes ? `
         <tr>
-          <td colspan="2" style="border: none; padding: 5px 0 0 0;"><strong style="color: #111827;">Operator Notes:</strong> ${escapeHtml(result.operatorNotes)}</td>
+          <td colspan="2" style="border: none; padding: 4px 0 0 0;"><strong style="color: #111827;">Field Notes:</strong> ${escapeHtml(result.operatorNotes)}</td>
         </tr>
         ` : ''}
       </table>
     </div>
 
-    <!-- KPI Metric Blocks -->
-    <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
+    <!-- Metric KPI Blocks -->
+    <table style="width: 100%; border-collapse: collapse; margin-bottom: 16px;">
       <tr>
-        <td style="width: 33.3%; border: 1px solid #d1d5db; border-radius: 6px; padding: 10px; text-align: center; background-color: #ffffff;">
-          <div style="font-size: 8.5pt; text-transform: uppercase; font-weight: 600; color: #4b5563;">Contamination Score</div>
-          <div style="font-size: 20pt; font-weight: 800; font-family: monospace; color: #111827; margin-top: 2px;">${contaminationScore}%</div>
+        <td style="width: 33.3%; border: 1px solid #d1d5db; border-radius: 6px; padding: 8px; text-align: center; background-color: #ffffff;">
+          <div style="font-size: 8pt; text-transform: uppercase; font-weight: 600; color: #4b5563;">Contamination Score</div>
+          <div style="font-size: 18pt; font-weight: 800; font-family: monospace; color: #111827; margin-top: 2px;">${contaminationScore}%</div>
         </td>
-        <td style="width: 33.3%; border: 1px solid #d1d5db; border-radius: 6px; padding: 10px; text-align: center; background-color: #ffffff;">
-          <div style="font-size: 8.5pt; text-transform: uppercase; font-weight: 600; color: #4b5563;">Commodity Purity Index</div>
-          <div style="font-size: 20pt; font-weight: 800; font-family: monospace; color: #111827; margin-top: 2px;">${purityIndex}%</div>
+        <td style="width: 33.3%; border: 1px solid #d1d5db; border-radius: 6px; padding: 8px; text-align: center; background-color: #ffffff;">
+          <div style="font-size: 8pt; text-transform: uppercase; font-weight: 600; color: #4b5563;">Purity Index</div>
+          <div style="font-size: 18pt; font-weight: 800; font-family: monospace; color: #111827; margin-top: 2px;">${purityIndex}%</div>
         </td>
-        <td style="width: 33.3%; border: 1px solid #d1d5db; border-radius: 6px; padding: 10px; text-align: center; background-color: #ffffff;">
-          <div style="font-size: 8.5pt; text-transform: uppercase; font-weight: 600; color: #4b5563;">Stream Suitability</div>
-          <div style="font-size: 13pt; font-weight: 800; color: #111827; margin-top: 6px;">${escapeHtml(result.streamSuitability || 'N/A')}</div>
+        <td style="width: 33.3%; border: 1px solid #d1d5db; border-radius: 6px; padding: 8px; text-align: center; background-color: #ffffff;">
+          <div style="font-size: 8pt; text-transform: uppercase; font-weight: 600; color: #4b5563;">Suitability Verdict</div>
+          <div style="font-size: 12pt; font-weight: 800; color: #111827; margin-top: 5px;">${escapeHtml((result.streamSuitability || '').replace(/_/g, ' '))}</div>
         </td>
       </tr>
     </table>
 
-    <!-- 01. Executive AI Assessment -->
-    <h2 style="font-size: 12pt; font-weight: 700; border-bottom: 1px solid #e5e7eb; padding-bottom: 4px; margin: 16px 0 8px 0; text-transform: uppercase; letter-spacing: 0.5px; color: #111827;">
-      01. Executive AI Assessment
+    <!-- 01. Visual Analysis Summary -->
+    <h2 style="font-size: 11pt; font-weight: 700; border-bottom: 1px solid #e5e7eb; padding-bottom: 3px; margin: 14px 0 6px 0; text-transform: uppercase; letter-spacing: 0.5px; color: #111827;">
+      01. Visual Analysis Summary
     </h2>
-    <p style="font-size: 10pt; line-height: 1.5; margin: 0 0 8px 0; color: #1f2937;">
-      ${escapeHtml(result.summaryProse || 'Assessment generated via automated optical computer vision inspection.')}
+    <p style="font-size: 9.5pt; line-height: 1.45; margin: 0 0 6px 0; color: #1f2937;">
+      ${escapeHtml(result.summaryProse || 'Assessment generated via automated visual inspection.')}
     </p>
-    <p style="font-size: 9.5pt; color: #374151; margin: 0 0 16px 0;">
-      <strong style="color: #111827;">Suitability Rationale:</strong> ${escapeHtml(result.suitabilityReason || 'Standard verification against scrap specifications.')}
+    <p style="font-size: 9pt; color: #374151; margin: 0 0 14px 0;">
+      <strong style="color: #111827;">Suitability Rationale:</strong> ${escapeHtml(result.suitabilityReason || 'Standard verification against stream specifications.')}
     </p>
 
-    <!-- 02. Material Composition Spectrum -->
-    <h2 style="font-size: 12pt; font-weight: 700; border-bottom: 1px solid #e5e7eb; padding-bottom: 4px; margin: 16px 0 8px 0; text-transform: uppercase; letter-spacing: 0.5px; color: #111827;">
-      02. Detected Material Composition Spectrum
+    <!-- 02. Material Composition Breakdown -->
+    <h2 style="font-size: 11pt; font-weight: 700; border-bottom: 1px solid #e5e7eb; padding-bottom: 3px; margin: 14px 0 6px 0; text-transform: uppercase; letter-spacing: 0.5px; color: #111827;">
+      02. Material Composition Breakdown
     </h2>
-    <table style="width: 100%; border-collapse: collapse; margin-bottom: 18px; font-size: 9.5pt;">
+    <table style="width: 100%; border-collapse: collapse; margin-bottom: 14px; font-size: 9pt;">
       <thead>
         <tr style="background-color: #f3f4f6;">
-          <th style="padding: 6px 10px; border: 1px solid #d1d5db; text-align: left; font-weight: 700;">Detected Commodity Item</th>
-          <th style="padding: 6px 10px; border: 1px solid #d1d5db; text-align: left; font-weight: 700;">Category</th>
-          <th style="padding: 6px 10px; border: 1px solid #d1d5db; text-align: right; font-weight: 700;">Composition %</th>
-          <th style="padding: 6px 10px; border: 1px solid #d1d5db; text-align: right; font-weight: 700;">AI Confidence</th>
-          <th style="padding: 6px 10px; border: 1px solid #d1d5db; text-align: center; font-weight: 700;">Target Status</th>
+          <th style="padding: 5px 8px; border: 1px solid #d1d5db; text-align: left; font-weight: 700;">Material Item</th>
+          <th style="padding: 5px 8px; border: 1px solid #d1d5db; text-align: left; font-weight: 700;">Category</th>
+          <th style="padding: 5px 8px; border: 1px solid #d1d5db; text-align: right; font-weight: 700;">Est. %</th>
+          <th style="padding: 5px 8px; border: 1px solid #d1d5db; text-align: right; font-weight: 700;">Confidence</th>
+          <th style="padding: 5px 8px; border: 1px solid #d1d5db; text-align: center; font-weight: 700;">Stream Compatibility</th>
         </tr>
       </thead>
       <tbody>
@@ -166,48 +168,48 @@ export function printAnalysisReport(result) {
       </tbody>
     </table>
 
-    <!-- 03. Flagged Contaminants & Evidence -->
-    <h2 style="font-size: 12pt; font-weight: 700; border-bottom: 1px solid #e5e7eb; padding-bottom: 4px; margin: 16px 0 8px 0; text-transform: uppercase; letter-spacing: 0.5px; color: #111827;">
-      03. Flagged Contaminants & Evidence
+    <!-- 03. Contamination Alerts & Evidence -->
+    <h2 style="font-size: 11pt; font-weight: 700; border-bottom: 1px solid #e5e7eb; padding-bottom: 3px; margin: 14px 0 6px 0; text-transform: uppercase; letter-spacing: 0.5px; color: #111827;">
+      03. Contamination Alerts &amp; Evidence
     </h2>
     ${alertsHtml}
 
-    <!-- 04. Corrective Action Checklist -->
-    <h2 style="font-size: 12pt; font-weight: 700; border-bottom: 1px solid #e5e7eb; padding-bottom: 4px; margin: 16px 0 8px 0; text-transform: uppercase; letter-spacing: 0.5px; color: #111827;">
-      04. Prioritized Operator Corrective Protocol
+    <!-- 04. Corrective-Action Checklist -->
+    <h2 style="font-size: 11pt; font-weight: 700; border-bottom: 1px solid #e5e7eb; padding-bottom: 3px; margin: 14px 0 6px 0; text-transform: uppercase; letter-spacing: 0.5px; color: #111827;">
+      04. Corrective Segregation Checklist
     </h2>
-    <ul style="margin: 0 0 16px 0; padding-left: 20px;">
+    <ul style="margin: 0 0 14px 0; padding-left: 20px;">
       ${checklistHtml}
     </ul>
 
-    <!-- 05. Facility Supervisor Directives -->
-    <h2 style="font-size: 12pt; font-weight: 700; border-bottom: 1px solid #e5e7eb; padding-bottom: 4px; margin: 16px 0 8px 0; text-transform: uppercase; letter-spacing: 0.5px; color: #111827;">
-      05. Facility Supervisor Directives
+    <!-- 05. Segregation Directives -->
+    <h2 style="font-size: 11pt; font-weight: 700; border-bottom: 1px solid #e5e7eb; padding-bottom: 3px; margin: 14px 0 6px 0; text-transform: uppercase; letter-spacing: 0.5px; color: #111827;">
+      05. Segregation Directives &amp; Guidance
     </h2>
-    <ul style="margin: 0 0 16px 0; padding-left: 20px; font-size: 9.5pt;">
+    <ul style="margin: 0 0 14px 0; padding-left: 20px; font-size: 9pt;">
       ${recommendationsHtml}
     </ul>
 
-    <!-- Quality Inspector Sign-Off -->
-    <div style="margin-top: 25px; padding-top: 10px; page-break-inside: avoid;">
+    <!-- Inspector Sign-Off -->
+    <div style="margin-top: 20px; padding-top: 8px; page-break-inside: avoid;">
       <table style="width: 100%; border-collapse: collapse;">
         <tr>
-          <td style="width: 48%; border: none; padding-right: 20px; vertical-align: top;">
-            <div style="border-bottom: 1px solid #111827; height: 28px; margin-bottom: 4px;"></div>
-            <div style="font-size: 8.5pt; color: #4b5563;">MRF Quality Inspector (Signature)</div>
+          <td style="width: 48%; border: none; padding-right: 15px; vertical-align: top;">
+            <div style="border-bottom: 1px solid #111827; height: 24px; margin-bottom: 3px;"></div>
+            <div style="font-size: 8pt; color: #4b5563;">Quality Inspector (Signature)</div>
           </td>
           <td style="width: 4%; border: none;"></td>
-          <td style="width: 48%; border: none; padding-left: 20px; vertical-align: top;">
-            <div style="border-bottom: 1px solid #111827; height: 28px; margin-bottom: 4px;"></div>
-            <div style="font-size: 8.5pt; color: #4b5563;">Date of Final Facility Disposition</div>
+          <td style="width: 48%; border: none; padding-left: 15px; vertical-align: top;">
+            <div style="border-bottom: 1px solid #111827; height: 24px; margin-bottom: 3px;"></div>
+            <div style="font-size: 8pt; color: #4b5563;">Date of Disposition</div>
           </td>
         </tr>
       </table>
     </div>
 
-    <!-- Regulatory Notice & Operating Limitations -->
-    <div style="margin-top: 25px; padding-top: 10px; border-top: 1px solid #d1d5db; font-size: 8pt; color: #6b7280; line-height: 1.4; page-break-inside: avoid;">
-      <strong style="color: #4b5563;">Regulatory Notice & Operating Limitations:</strong> This report is produced by EcoSort AI optical computer-vision models in accordance with ISRI Scrap Specifications Circular, EN 643 recovered paper tolerances, and APR model bale guidelines. All metric figures represent optical surface spectral estimation. Final downstream bale acceptance remains subject to manual grab moisture tests, bale coring, and contract-specific buyer specifications.
+    <!-- Mandatory Uncertainty Notice -->
+    <div style="margin-top: 20px; padding: 8px 10px; border: 1px solid #d1d5db; background-color: #f9fafb; border-radius: 4px; font-size: 8pt; color: #4b5563; line-height: 1.4; page-break-inside: avoid;">
+      <strong style="color: #111827;">Uncertainty &amp; Operating Limitations:</strong> Results are image-based estimates. Hidden chemical or microbial contamination cannot be verified from an RGB image. Follow local municipal and recycler guidelines.
     </div>
   `;
 

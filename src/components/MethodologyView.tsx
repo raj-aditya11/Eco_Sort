@@ -1,79 +1,79 @@
 import React from 'react';
-import { BookOpen, CheckCircle2, Shield, Layers, Scale, Sparkles } from 'lucide-react';
+import { BookOpen, Shield, Scale } from 'lucide-react';
 import { WASTE_STREAM_DEFINITIONS } from '../data/standards.ts';
 
 export const MethodologyView: React.FC = () => {
   return (
-    <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-10">
+    <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
       {/* Header */}
-      <div className="border-b border-[#E2E6DF] dark:border-[#1C2B25] pb-5">
-        <div className="flex items-center gap-2 text-xs text-[#737D75] dark:text-[#85948A] mb-1">
-          <span>Standards &amp; Compliance</span>
+      <div className="border-b border-[#E2E6DF] dark:border-[#1B332B] pb-5">
+        <div className="flex items-center gap-2 text-xs text-[#66736C] dark:text-[#8A9890] mb-1">
+          <span>Standards &amp; Quality</span>
           <span aria-hidden="true">/</span>
-          <span className="text-[#18251F] dark:text-[#EAEFEA] font-medium">Measurement Methodology</span>
+          <span className="text-[#102A24] dark:text-[#EAEFEA] font-semibold">Inspection Methodology</span>
         </div>
         <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-[#102A24] dark:text-[#EAEFEA]">
-          Regulatory &amp; Quality Specifications
+          Waste Stream Quality Specifications
         </h1>
-        <p className="text-xs sm:text-sm text-[#737D75] dark:text-[#85948A] mt-0.5">
-          How EcoSort AI aligns computer vision optical models with international secondary commodity trading standards.
+        <p className="text-xs sm:text-sm text-[#66736C] dark:text-[#8A9890] mt-0.5">
+          How EcoSort AI aligns visual contamination assessment with established secondary commodity recovery standards.
         </p>
       </div>
 
       {/* Core Standard Pillars */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="p-6 rounded-2xl bg-white dark:bg-[#102A24] border border-[#E2E6DF] dark:border-[#1E352F] shadow-sm space-y-3">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+        <div className="p-5 rounded-xl bg-white dark:bg-[#10221D] border border-[#E2E6DF] dark:border-[#1B332B] shadow-xs space-y-2.5">
           <div className="w-9 h-9 rounded-lg bg-[#16A36A]/10 text-[#16A36A] flex items-center justify-center">
             <BookOpen className="w-4 h-4" />
           </div>
           <h3 className="font-bold text-sm text-[#18251F] dark:text-[#EAEFEA]">
-            ISRI Scrap Specifications
+            ISRI Scrap Guidelines
           </h3>
-          <p className="text-xs text-[#737D75] dark:text-[#85948A] leading-relaxed">
-            Incorporates the Institute of Scrap Recycling Industries scrap trade guidelines. Defines strict moisture, outthrow, and prohibitive tolerances for paper and non-ferrous metals.
+          <p className="text-xs text-[#66736C] dark:text-[#8A9890] leading-relaxed">
+            Incorporates Institute of Scrap Recycling Industries specifications. Defines outthrow, prohibitive, and moisture tolerances for paper, cardboard, and non-ferrous metals.
           </p>
         </div>
 
-        <div className="p-6 rounded-2xl bg-white dark:bg-[#102A24] border border-[#E2E6DF] dark:border-[#1E352F] shadow-sm space-y-3">
+        <div className="p-5 rounded-xl bg-white dark:bg-[#10221D] border border-[#E2E6DF] dark:border-[#1B332B] shadow-xs space-y-2.5">
           <div className="w-9 h-9 rounded-lg bg-[#3B82F6]/10 text-[#3B82F6] flex items-center justify-center">
             <Shield className="w-4 h-4" />
           </div>
           <h3 className="font-bold text-sm text-[#18251F] dark:text-[#EAEFEA]">
             APR Model Bale Specifications
           </h3>
-          <p className="text-xs text-[#737D75] dark:text-[#85948A] leading-relaxed">
-            Association of Plastic Recyclers criteria for bottle-to-bottle circularity. Establishes thresholds for clear PET, HDPE fractions, and non-melting polymer contaminants like PVC.
+          <p className="text-xs text-[#66736C] dark:text-[#8A9890] leading-relaxed">
+            Association of Plastic Recyclers criteria for bottle-to-bottle recycling. Establishes thresholds for clear PET, HDPE fractions, and incompatible polymer contaminants like PVC.
           </p>
         </div>
 
-        <div className="p-6 rounded-2xl bg-white dark:bg-[#102A24] border border-[#E2E6DF] dark:border-[#1E352F] shadow-sm space-y-3">
+        <div className="p-5 rounded-xl bg-white dark:bg-[#10221D] border border-[#E2E6DF] dark:border-[#1B332B] shadow-xs space-y-2.5">
           <div className="w-9 h-9 rounded-lg bg-[#C8F169]/20 text-[#102A24] dark:text-[#C8F169] flex items-center justify-center">
             <Scale className="w-4 h-4" />
           </div>
           <h3 className="font-bold text-sm text-[#18251F] dark:text-[#EAEFEA]">
-            EN 643 European Paper Standard
+            EN 643 European Standard
           </h3>
-          <p className="text-xs text-[#737D75] dark:text-[#85948A] leading-relaxed">
-            Strict European list of standard grades of recovered paper and board, bounding non-paper components to strict 1.5% to 5.0% maximums depending on industrial mill application.
+          <p className="text-xs text-[#66736C] dark:text-[#8A9890] leading-relaxed">
+            Standard European list of recovered paper and board grades, bounding non-paper components to strict 1.5% to 5.0% maximums depending on industrial pulping application.
           </p>
         </div>
       </div>
 
       {/* Waste Stream Threshold Matrix */}
-      <div className="rounded-2xl bg-white dark:bg-[#102A24] border border-[#E2E6DF] dark:border-[#1E352F] shadow-sm overflow-hidden space-y-4 p-6">
+      <div className="rounded-xl bg-white dark:bg-[#10221D] border border-[#E2E6DF] dark:border-[#1B332B] shadow-xs overflow-hidden space-y-4 p-5">
         <div>
           <h3 className="font-bold text-sm text-[#18251F] dark:text-[#EAEFEA]">
-            Official Tolerance Matrix by Commodity Stream
+            Tolerance Matrix by Commodity Stream
           </h3>
-          <p className="text-xs text-[#737D75] dark:text-[#85948A]">
-            Standard thresholds used by EcoSort AI to determine stream acceptance vs. mandatory positive sortation.
+          <p className="text-xs text-[#66736C] dark:text-[#8A9890]">
+            Thresholds applied by EcoSort AI to determine stream acceptance vs. required sorting intervention.
           </p>
         </div>
 
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse text-xs">
             <thead>
-              <tr className="border-b border-[#E2E6DF] dark:border-[#1C2B25] text-[#737D75] dark:text-[#85948A] bg-[#F7F8F5]/60 dark:bg-[#0D1614]/60">
+              <tr className="border-b border-[#E2E6DF] dark:border-[#1B332B] text-[#66736C] dark:text-[#8A9890] bg-[#F7F8F5]/60 dark:bg-[#0C1613]/60">
                 <th className="py-3 px-4 font-semibold">Stream Commodity</th>
                 <th className="py-3 px-4 font-semibold text-right">Max Contamination Cap</th>
                 <th className="py-3 px-4 font-semibold text-right">Target Purity</th>
@@ -81,7 +81,7 @@ export const MethodologyView: React.FC = () => {
                 <th className="py-3 px-4 font-semibold">Critical Prohibited Items</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-[#E2E6DF] dark:divide-[#1C2B25]">
+            <tbody className="divide-y divide-[#E2E6DF] dark:divide-[#1B332B]">
               {Object.values(WASTE_STREAM_DEFINITIONS).map((def) => (
                 <tr key={def.id} className="hover:bg-[#F2F4EF] dark:hover:bg-[#15342C] transition-colors">
                   <td className="py-3.5 px-4 font-semibold text-[#18251F] dark:text-[#EAEFEA]">
@@ -93,7 +93,7 @@ export const MethodologyView: React.FC = () => {
                   <td className="py-3.5 px-4 text-right font-mono font-bold text-[#16A36A]">
                     &ge; {def.targetPurityMin}%
                   </td>
-                  <td className="py-3.5 px-4 text-[#737D75] dark:text-[#85948A]">
+                  <td className="py-3.5 px-4 text-[#66736C] dark:text-[#8A9890]">
                     {def.typicalCommodities.slice(0, 3).join(', ')}
                   </td>
                   <td className="py-3.5 px-4 text-red-600 dark:text-red-400">
